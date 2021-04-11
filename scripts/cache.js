@@ -184,7 +184,7 @@ function returnCacheImage(file, sha, callback = false, vars = false)
 		sha = sha1(file);
 	}
 	
-	var size = Math.round(window.devicePixelRatio * 150);
+	var size = Math.round(window.devicePixelRatio * 200);
 
 	var imgCache = data[sha];
 

@@ -1718,16 +1718,16 @@ body .preload
 
 .content-view-module > div
 {
-	width: 150px;
-	height: 273px;
+	width: 200px;
+	height: 364px;
 	margin: 16px 0px 16px 16px;
 	float: left;
 }
 
 .content-view-module .v-folder
 {
-	width: 150px;
-	height: 225px;
+	width: 200px;
+	height: 300px;
 	border-radius: 4px;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	background-color: #fff;
@@ -1741,17 +1741,17 @@ body .preload
 
 .content-view-module .v-img
 {
-	width: 150px;
-	height: 225px;
+	width: 200px;
+	height: 300px;
 	cursor: pointer;
-	line-height: 225px;
+	line-height: 300px;
 	text-align: center;
 }
 
 .content-view-module .v-img > img
 {
-	max-width: 150px;
-	max-height: 225px;
+	max-width: 200px;
+	max-height: 300px;
 	display: inline-block;
 	vertical-align: middle;
 	border-radius: 4px;
@@ -1773,7 +1773,7 @@ body .preload
 .content-view-module .v-text
 {
 	height: 48px;
-	width: 150px;
+	width: 200px;
 	line-height: 48px;
 	text-align: center;
 	text-overflow: ellipsis;
@@ -1784,8 +1784,8 @@ body .preload
 
 .content-view-module .folder-images
 {
-	width: 60px;
-	height: 97px;
+	width: 80px;
+	height: 129px;
 	margin: 10px 0px 0px 10px;
 	background-size: 100%;
 	background-position: 50%;
@@ -1794,14 +1794,14 @@ body .preload
 	box-sizing: border-box;
 	float: left;
 	background-repeat: no-repeat;
-	line-height: 97px;
+	line-height: 129px;
 	text-align: center;
 }
 
 .content-view-module .folder-images > img
 {
-	max-width: 60px;
-	max-height: 97px;
+	max-width: 80px;
+	max-height: 129px;
 	display: inline-block;
 	vertical-align: middle;
 	border-radius: 4px;

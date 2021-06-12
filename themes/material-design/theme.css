@@ -2719,6 +2719,7 @@ body .night-mode
 {
 	border-left: 1px solid #414141;
 	background-color: #212121;
+	display: none;
 }
 
 .night-mode .bar-right-buttons::-webkit-scrollbar

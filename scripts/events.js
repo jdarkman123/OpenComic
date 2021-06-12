@@ -70,6 +70,7 @@ function eventButton()
 
 }
 
+
 var eventHoverTimeout, eventHoverTimeoutThis, eventHoverTimeoutActive = false, showedHoverText = false, currentPageX, currentPageY;
 
 function eventHover()
@@ -99,6 +100,7 @@ function eventHover()
 
 	});
 
+	
 	$(window).on('mousedown.events touchstart.events', function(){
 
 		hideHoverText();

@@ -50,6 +50,14 @@ window.addEventListener('error', function(evt) {
 
 }, true);
 
+document.addEventListener("mouseup", function (event) {
+	console.log(event.button);
+	if (event.button === 3) {
+		$(".bar-back, .show").trigger('click');
+	}
+});
+
+
 const electron = require('electron'),
 	fs = require('fs'),
 	fse = require('fs-extra'),

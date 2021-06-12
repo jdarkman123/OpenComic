@@ -1,21 +1,28 @@
 
-var images = {}, imagesData = {}, imagesPath = {}, imagesNum = 0, contentNum = 0, imagesNumLoad = 0, currentIndex = 1, imagesPosition = {}, imagesFullPosition = {}, foldersPosition = {}, indexNum = 0, imagesDistribution = [], currentPageXY = { x: 0, y: 0 };
+var images = {}, imagesData = {}, imagesPath = {}, imagesNum = 0, contentNum = 0, imagesNumLoad = 0, currentIndex = 1, imagesPosition = {}, imagesFullPosition = {}, foldersPosition = {}, indexNum = 0, imagesDistribution = [], currentPageXY = {x: 0, y: 0};
 
 //Calculates whether to add a blank image (If the reading is in double page and do not apply to the horizontals)
-function blankPage(index) {
+function blankPage(index)
+{
 	var key = 0;
 
-	if (_config.readingDoublePage && !_config.readingWebtoon && _config.readingDoNotApplyToHorizontals) {
-		for (let i = index; i < (imagesNum + 1); i++) {
-			if (typeof imagesData[i] !== 'undefined') {
-				if (imagesData[i].aspectRatio > 1) {
+	if(_config.readingDoublePage && !_config.readingWebtoon && _config.readingDoNotApplyToHorizontals)
+	{
+		for(let i = index; i < (imagesNum + 1); i++)
+		{
+			if(typeof imagesData[i] !== 'undefined')
+			{
+				if(imagesData[i].aspectRatio > 1)
+				{
 					return key % 2;
 				}
-				else {
+				else
+				{
 					key++;
 				}
 			}
-			else {
+			else
+			{
 				key++;
 			}
 		}
@@ -23,46 +30,55 @@ function blankPage(index) {
 }
 
 //Calculates the distribution of the images depending on the user's configuration
-function calculateImagesDistribution() {
+function calculateImagesDistribution()
+{
 	imagesDistribution = [];
 	indexNum = 0;
 
-	if (_config.readingDoublePage && !_config.readingWebtoon) {
+	if(_config.readingDoublePage && !_config.readingWebtoon)
+	{
 		var data = [];
 
-		if (_config.readingBlankPage && (!_config.readingDoNotApplyToHorizontals || (typeof imagesData[1] !== 'undefined' && imagesData[1].aspectRatio <= 1)))
-			data.push({ index: false, folder: false, blank: true, width: 2 });
+		if(_config.readingBlankPage && (!_config.readingDoNotApplyToHorizontals || (typeof imagesData[1] !== 'undefined' && imagesData[1].aspectRatio <= 1)))
+			data.push({index: false, folder: false, blank: true, width: 2});
 
-		for (let i = 1; i < (contentNum + 1); i++) {
-			if (typeof imagesData[i] !== 'undefined') {
-				if (_config.readingDoNotApplyToHorizontals && imagesData[i].aspectRatio > 1) {
-					if (data.length > 0) {
-						data.push({ index: false, folder: false, blank: true, width: 2 });
+		for(let i = 1; i < (contentNum + 1); i++)
+		{
+			if(typeof imagesData[i] !== 'undefined')
+			{
+				if(_config.readingDoNotApplyToHorizontals && imagesData[i].aspectRatio > 1)
+				{
+					if(data.length > 0)
+					{
+						data.push({index: false, folder: false, blank: true, width: 2});
 						imagesDistribution.push(data);
 						data = [];
 						indexNum++;
 					}
 
-					data.push({ index: i, folder: false, blank: false, width: 1 });
-					imagesData[i].position = indexNum;
+					data.push({index: i, folder: false, blank: false, width: 1});
+					imagesData[i].position = indexNum; 
 					imagesDistribution.push(data);
 					indexNum++;
 					data = [];
 				}
-				else {
-					if (_config.readingDoNotApplyToHorizontals && data.length == 0 && blankPage(i))
-						data.push({ index: false, folder: false, blank: true, width: 2 });
+				else
+				{
+					if(_config.readingDoNotApplyToHorizontals && data.length == 0 && blankPage(i))
+						data.push({index: false, folder: false, blank: true, width: 2});
 
-					data.push({ index: i, folder: false, blank: false, width: 2 });
-					imagesData[i].position = indexNum;
+					data.push({index: i, folder: false, blank: false, width: 2});
+					imagesData[i].position = indexNum; 
 				}
 			}
-			else {
-				data.push({ index: i, folder: true, blank: false, width: 2 });
+			else
+			{
+				data.push({index: i, folder: true, blank: false, width: 2});
 				foldersPosition[i] = indexNum;
 			}
 
-			if (data.length > 1) {
+			if(data.length > 1)
+			{
 				imagesDistribution.push(data);
 				data = [];
 				indexNum++;
@@ -70,23 +86,28 @@ function calculateImagesDistribution() {
 
 		}
 
-		if (data.length > 0) {
-			if (data.length == 1 && data[0].width == 2)
-				data.push({ index: false, folder: false, blank: true, width: 2 });
+		if(data.length > 0)
+		{
+			if(data.length == 1 && data[0].width == 2)
+				data.push({index: false, folder: false, blank: true, width: 2});
 
 			imagesDistribution.push(data);
 			indexNum++;
 		}
 	}
-	else {
-		for (let i = 1; i < (contentNum + 1); i++) {
-			if (typeof imagesData[i] !== 'undefined') {
-				imagesDistribution.push([{ index: i, folder: false, blank: false, width: 1 }]);
+	else
+	{
+		for(let i = 1; i < (contentNum + 1); i++)
+		{
+			if(typeof imagesData[i] !== 'undefined')
+			{
+				imagesDistribution.push([{index: i, folder: false, blank: false, width: 1}]);
 				imagesData[i].position = indexNum;
 				indexNum++;
 			}
-			else {
-				imagesDistribution.push([{ index: i, folder: true, blank: false, width: 1 }]);
+			else
+			{
+				imagesDistribution.push([{index: i, folder: true, blank: false, width: 1}]);
 				indexNum++;
 			}
 		}
@@ -118,22 +139,27 @@ function calculateImagesDistribution() {
 
 var currentComics = [];
 
-function setCurrentComics(comics) {
+function setCurrentComics(comics)
+{
 	currentComics = {};
 
-	for (let key in comics) {
+	for(let key in comics)
+	{
 		currentComics[comics[key].index] = comics[key];
 	}
 }
 
-function applyMangaReading(distribution) {
+function applyMangaReading(distribution)
+{
 	_distribution = JSON.parse(JSON.stringify(distribution));
 
-	if (_config.readingManga) {
-		if (!readingViewIs('scroll'))
+	if(_config.readingManga)
+	{
+		if(!readingViewIs('scroll'))
 			_distribution.reverse();
 
-		for (let i = 0, len = _distribution.length; i < len; i++) {
+		for(let i = 0, len = _distribution.length; i < len; i++)
+		{
 			_distribution[i].reverse();
 		}
 	}
@@ -142,27 +168,32 @@ function applyMangaReading(distribution) {
 }
 
 // Add images distribution to html
-function addHtmlImages() {
+function addHtmlImages()
+{
 	calculateImagesDistribution();
 
 	var _imagesDistribution = applyMangaReading(imagesDistribution);
 
 	var folderImages = [];
 
-	for (let key1 in _imagesDistribution) {
+	for(let key1 in _imagesDistribution)
+	{
 		var distribution = [];
 
-		for (let key2 in _imagesDistribution[key1]) {
+		for(let key2 in _imagesDistribution[key1])
+		{
 			var image = _imagesDistribution[key1][key2];
 
 			image.key1 = key1;
 			image.key2 = key2;
 
-			if (!image.folder && !image.blank) {
+			if(!image.folder && !image.blank)
+			{
 				image.path = currentComics[image.index].path;
 				image.image = currentComics[image.index].image;
 			}
-			else if (image.folder) {
+			else if(image.folder)
+			{
 				image.name = currentComics[image.index].name;
 				image.path = currentComics[image.index].path;
 				image.image = currentComics[image.index].image;
@@ -173,7 +204,7 @@ function addHtmlImages() {
 			distribution.push(image);
 		}
 
-		folderImages.push({ key1: key1, distribution: distribution });
+		folderImages.push({key1: key1, distribution: distribution});
 	}
 
 	handlebarsContext.folderImages = folderImages;
@@ -187,20 +218,23 @@ function addHtmlImages() {
 }
 
 //Calculates the size and position of the images
-function calcAspectRatio(first, second) {
-	if (!first)
+function calcAspectRatio(first, second)
+{
+	if(!first)
 		return false;
 
-	if (second) {
-		if (first.folder)
+	if(second)
+	{
+		if(first.folder)
 			first.aspectRatio = 1;
-		else if (first.blank)
+		else if(first.blank)
 			first.aspectRatio = second.folder ? 1 : imagesData[second.index].aspectRatio;
 		else
 			first.aspectRatio = imagesData[first.index].aspectRatio;
 	}
-	else {
-		if (first.folder)
+	else
+	{
+		if(first.folder)
 			first.aspectRatio = 1;
 		else
 			first.aspectRatio = imagesData[first.index].aspectRatio;
@@ -209,16 +243,17 @@ function calcAspectRatio(first, second) {
 	return first;
 }
 
-function disposeImages(data = false) {
+function disposeImages(data = false)
+{
 	var margin = (data && typeof data.margin !== 'undefined') ? data.margin : _config.readingMargin.margin;
-	var marginHorizontal = ((data && typeof data.left !== 'undefined') ? data.left : _config.readingMargin.left) * 3;
+	var marginHorizontal = (data && typeof data.left !== 'undefined') ? data.left : _config.readingMargin.left;
 	var marginVertical = (data && typeof data.top !== 'undefined') ? data.top : _config.readingMargin.top;
 	var marginHorizontalsHorizontal = (data && typeof data.horizontalsLeft !== 'undefined') ? data.horizontalsLeft : _config.readingHorizontalsMargin.left;
 	//var marginHorizontalsVertical = (data && typeof data.horizontalsTop !== 'undefined') ? data.horizontalsTop : _config.readingHorizontalsMargin.top;
 
 	var contentHeight = template.contentRight().children('div').height();
 
-	if (readingViewIs('scroll'))
+	if(readingViewIs('scroll'))
 		var contentWidth = template.contentRight('.reading-body').width();
 	else
 		var contentWidth = template.contentRight().width();
@@ -233,14 +268,16 @@ function disposeImages(data = false) {
 
 	var _imagesDistribution = applyMangaReading(imagesDistribution);
 
-	for (let key1 in _imagesDistribution) {
+	for(let key1 in _imagesDistribution)
+	{
 		var first = _imagesDistribution[key1][0];
 		var second = _imagesDistribution[key1][1];
 
 		first = calcAspectRatio(first, second);
 		second = calcAspectRatio(second, first);
 
-		if (second) {
+		if(second)
+		{
 			var imageHeight0, imageWidth0, marginLeft0, marginTop0, imageHeight1, imageWidth1, marginLeft1, marginTop1;
 
 			var imageHeight = imageHeight0 = imageHeight1 = (contentHeight - marginVertical * 2);
@@ -250,12 +287,14 @@ function disposeImages(data = false) {
 
 			var joinWidth = imageWidth0 + imageWidth1 + marginHorizontal;
 
-			if (joinWidth < contentWidth0 && !(readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon))) {
+			if(joinWidth < contentWidth0 && !(readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)))
+			{
 				marginLeft0 = contentWidth / 2 - (imageWidth0 + imageWidth1 + marginHorizontal) / 2;
 				marginLeft1 = marginHorizontal;
 				marginTop0 = marginTop1 = marginVertical;
 			}
-			else {
+			else
+			{
 				imageWidth0 = (first.aspectRatio / (first.aspectRatio + second.aspectRatio)) * (contentWidth0 - marginHorizontal);
 				imageWidth1 = (second.aspectRatio / (second.aspectRatio + first.aspectRatio)) * (contentWidth0 - marginHorizontal);
 
@@ -265,50 +304,57 @@ function disposeImages(data = false) {
 				marginTop0 = marginTop1 = contentHeight / 2 - imageHeight / 2;
 			}
 
-			if (readingViewIs('scroll'))
+			if(readingViewIs('scroll'))
 				marginTop0 = marginTop1 = marginVertical;
 
-			template.contentRight('.image-position' + key1 + '-0 img, .image-position' + key1 + '-0 > div').css({
-				'height': imageHeight0 + 'px',
-				'width': imageWidth0 + 'px',
-				'margin-left': marginLeft0 + 'px',
-				'margin-top': marginTop0 + 'px',
-				'margin-bottom': ((readingViewIs('scroll') && ((+key1) + 1) == indexNum) ? marginVertical : 0) + 'px',
+			template.contentRight('.image-position'+key1+'-0 img, .image-position'+key1+'-0 > div').css({
+				'height': imageHeight0+'px',
+				'width': imageWidth0+'px',
+				'margin-left': marginLeft0+'px',
+				'margin-top': marginTop0+'px',
+				'margin-bottom': ((readingViewIs('scroll') && ((+key1) + 1) == indexNum) ? marginVertical : 0)+'px',
 				'margin-right': '0px',
 			});
 
-			template.contentRight('.image-position' + key1 + '-1 img, .image-position' + key1 + '-1 > div').css({
-				'height': imageHeight1 + 'px',
-				'width': imageWidth1 + 'px',
-				'margin-left': marginLeft1 + 'px',
-				'margin-top': marginTop1 + 'px',
-				'margin-bottom': ((readingViewIs('scroll') && ((+key1) + 1) == indexNum) ? marginVertical : 0) + 'px',
+			template.contentRight('.image-position'+key1+'-1 img, .image-position'+key1+'-1 > div').css({
+				'height': imageHeight1+'px',
+				'width': imageWidth1+'px',
+				'margin-left': marginLeft1+'px',
+				'margin-top': marginTop1+'px',
+				'margin-bottom': ((readingViewIs('scroll') && ((+key1) + 1) == indexNum) ? marginVertical : 0)+'px',
 				'margin-right': '0px',
 			});
 		}
-		else {
-			if (_config.readingHorizontalsMarginActive && first.aspectRatio > 1) {
-				if (aspectRatioHorizontals0 > first.aspectRatio && !(readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon))) {
+		else
+		{
+			if(_config.readingHorizontalsMarginActive && first.aspectRatio > 1)
+			{
+				if(aspectRatioHorizontals0 > first.aspectRatio && !(readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)))
+				{
 					var imageHeight = (contentHeight - marginVertical * 2);
 					var imageWidth = imageHeight * first.aspectRatio;
 					var marginLeft = contentWidth / 2 - imageWidth / 2;
 					var marginTop = marginVertical;
 				}
-				else {
+				else
+				{
 					var imageWidth = (contentWidth - marginHorizontalsHorizontal * 2);
 					var imageHeight = imageWidth / first.aspectRatio;
 					var marginLeft = marginHorizontalsHorizontal;
 					var marginTop = contentHeight / 2 - imageHeight / 2;
 				}
 			}
-			else {
-				if (aspectRatio0 > first.aspectRatio && !(readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon))) {
+			else
+			{
+				if(aspectRatio0 > first.aspectRatio && !(readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)))
+				{
 					var imageHeight = (contentHeight - marginVertical * 2);
 					var imageWidth = imageHeight * first.aspectRatio;
 					var marginLeft = contentWidth / 2 - imageWidth / 2;
 					var marginTop = marginVertical;
 				}
-				else {
+				else
+				{
 					var imageWidth = (contentWidth - marginHorizontal * 2);
 					var imageHeight = imageWidth / first.aspectRatio;
 					var marginLeft = marginHorizontal;
@@ -316,62 +362,68 @@ function disposeImages(data = false) {
 				}
 			}
 
-			if (readingViewIs('scroll'))
+			if(readingViewIs('scroll'))
 				marginTop = marginVertical;
 
-			template.contentRight('.image-position' + key1 + '-0 img, .image-position' + key1 + '-0 > div').css({
-				'height': imageHeight + 'px',
-				'width': imageWidth + 'px',
-				'margin-left': marginLeft + 'px',
-				'margin-top': marginTop + 'px',
-				'margin-bottom': ((readingViewIs('scroll') && ((+key1) + 1) == indexNum) ? marginVertical : 0) + 'px',
+			template.contentRight('.image-position'+key1+'-0 img, .image-position'+key1+'-0 > div').css({
+				'height': imageHeight+'px',
+				'width': imageWidth+'px',
+				'margin-left': marginLeft+'px',
+				'margin-top': marginTop+'px',
+				'margin-bottom': ((readingViewIs('scroll') && ((+key1) + 1) == indexNum) ? marginVertical : 0)+'px',
 				'margin-right': '0px',
 			});
 		}
 
-		template.contentRight('.image-position' + key1).css({
-			'width': contentWidth + 'px',
-			'height': !readingViewIs('scroll') ? contentHeight + 'px' : '',
+		template.contentRight('.image-position'+key1).css({
+			'width': contentWidth+'px',
+			'height': !readingViewIs('scroll') ? contentHeight+'px' : '',
 		});
 	}
 }
 
-function calculateView() {
+function calculateView()
+{
 	var content = template.contentRight().children('div');
 	var contentWidth = template.contentRight().width();
 
-	if (readingViewIs('slide')) {
+	if(readingViewIs('slide'))
+	{
 		template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-			'width': (contentWidth * indexNum) + 'px',
+			'width': (contentWidth * indexNum)+'px',
 			'height': content.height(),
 		});
 	}
-	else if (readingViewIs('scroll')) {
+	else if(readingViewIs('scroll'))
+	{
 		template.contentRight('.reading-body > div').css({
 			'width': '100%',
 		});
 
 		template.contentRight('.reading-lens > div > div').css({
-			'width': ($('.content-right').width()) + 'px',
+			'width': ($('.content-right').width())+'px',
 		});
 	}
 
-	if (readingViewIs('scroll')) {
+	if(readingViewIs('scroll'))
+	{
 		imagesPosition = [];
 		imagesFullPosition = [];
 
 		var scrollTop = content.scrollTop() - content.offset().top;
 
-		for (var key1 in imagesDistribution) {
-			if (typeof imagesPosition[key1] === 'undefined') imagesPosition[key1] = [];
-			if (typeof imagesFullPosition[key1] === 'undefined') imagesFullPosition[key1] = [];
+		for(var key1 in imagesDistribution)
+		{
+			if(typeof imagesPosition[key1] === 'undefined') imagesPosition[key1] = [];
+			if(typeof imagesFullPosition[key1] === 'undefined') imagesFullPosition[key1] = [];
 
-			for (var key2 in imagesDistribution[key1]) {
-				var image = template.contentRight('.image-position' + key1 + '-' + key2);
+			for(var key2 in imagesDistribution[key1])
+			{
+				var image = template.contentRight('.image-position'+key1+'-'+key2);
 
 				let offset = image.offset(),
 					top = offset.top + _config.readingMargin.top;
-				height = image.height() - _config.readingMargin.top;
+					height = image.height() - _config.readingMargin.top;
 
 				imagesPosition[key1][key2] = (top + (height / 2)) + scrollTop;
 				imagesFullPosition[key1][key2] = {
@@ -386,19 +438,22 @@ function calculateView() {
 
 var previousScrollTop = 0, previousContentHeight = 0;
 
-function stayInLine() {
-	if (readingViewIs('slide') || (readingViewIs('scroll') && !_config.readingViewAdjustToWidth && !_config.readingWebtoon)) {
-		if (currentIndex < 1)
+function stayInLine()
+{
+	if(readingViewIs('slide') || (readingViewIs('scroll') && !_config.readingViewAdjustToWidth && !_config.readingWebtoon))
+	{
+		if(currentIndex < 1)
 			showPreviousComic(1, false);
-		else if (currentIndex > contentNum)
+		else if(currentIndex > contentNum)
 			showNextComic(1, false);
 		else
 			goToIndex(currentIndex, false, currentPageVisibility);
 	}
-	else if (readingViewIs('scroll')) {
-		if (currentIndex < 1)
+	else if(readingViewIs('scroll'))
+	{
+		if(currentIndex < 1)
 			showPreviousComic(1, false);
-		else if (currentIndex > contentNum)
+		else if(currentIndex > contentNum)
 			showNextComic(1, false);
 		else
 			goToIndex(currentIndex, false, currentPageVisibility);
@@ -406,39 +461,45 @@ function stayInLine() {
 }
 
 //Go to a specific comic image (Left menu)
-function goToImageCL(index, animation = true) {
+function goToImageCL(index, animation = true)
+{
 	var animationDurationMS = ((animation) ? _config.readingViewSpeed : 0) * 1000;
 
-	var leftScroll = template.contentLeft('.r-l-i' + index).parent();
-	var leftImg = template.contentLeft('.r-l-i' + index);
+	var leftScroll = template.contentLeft('.r-l-i'+index).parent();
+	var leftImg = template.contentLeft('.r-l-i'+index);
 
 	template.contentLeft('.reading-left').removeClass('s');
 	leftImg.addClass('s');
 
 	var scrollTop = (((leftImg.offset().top + leftScroll.scrollTop()) - leftScroll.offset().top) + (leftImg.outerHeight() / 2)) - (leftScroll.height() / 2);
 
-	if (scrollTop > 0 && scrollTop < (leftScroll[0].scrollHeight - leftScroll.height())) {
-		leftScroll.stop(true).animate({ scrollTop: scrollTop + 'px' }, animationDurationMS);
+	if(scrollTop > 0 && scrollTop < (leftScroll[0].scrollHeight - leftScroll.height()))
+	{
+		leftScroll.stop(true).animate({scrollTop: scrollTop+'px'}, animationDurationMS);
 	}
-	else if (scrollTop > 0) {
-		leftScroll.stop(true).animate({ scrollTop: (leftScroll[0].scrollHeight - leftScroll.height()) + 'px' }, animationDurationMS);
+	else if(scrollTop > 0)
+	{
+		leftScroll.stop(true).animate({scrollTop: (leftScroll[0].scrollHeight - leftScroll.height())+'px'}, animationDurationMS);
 	}
-	else {
-		leftScroll.stop(true).animate({ scrollTop: 0 + 'px' }, animationDurationMS);
+	else
+	{
+		leftScroll.stop(true).animate({scrollTop: 0+'px'}, animationDurationMS);
 	}
 }
 
 //Go to a specific comic image
-function goToImage(imageIndex, bookmarks = false) {
-	if (typeof imagesData[imageIndex] !== 'undefined') {
-		if (!bookmarks)
+function goToImage(imageIndex, bookmarks = false)
+{
+	if(typeof imagesData[imageIndex] !== 'undefined')
+	{
+		if(!bookmarks)
 			saveReadingProgressA = true;
 
 		readingDirection = true;
 
 		var newIndex = imagesData[imageIndex].position + 1;
 
-		if (_config.readingManga && !readingViewIs('scroll'))
+		if(_config.readingManga && !readingViewIs('scroll'))
 			newIndex = (indexNum - newIndex) + 1;
 
 		goToIndex(newIndex);
@@ -447,13 +508,15 @@ function goToImage(imageIndex, bookmarks = false) {
 }
 
 //Go to a specific comic folder
-function goToFolder(folderIndex) {
-	if (typeof foldersPosition[folderIndex] !== 'undefined') {
+function goToFolder(folderIndex)
+{
+	if(typeof foldersPosition[folderIndex] !== 'undefined')
+	{
 		readingDirection = true;
 
 		var newIndex = foldersPosition[folderIndex] + 1;
 
-		if (_config.readingManga && !readingViewIs('scroll'))
+		if(_config.readingManga && !readingViewIs('scroll'))
 			newIndex = (indexNum - newIndex) + 1;
 
 		goToIndex(newIndex);
@@ -462,20 +525,25 @@ function goToFolder(folderIndex) {
 }
 
 //Returns the highest image
-function returnLargerImage(index) {
-	if (_config.readingDoublePage && !_config.readingWebtoon) {
-		var imageHeight0 = template.contentRight('.image-position' + (index) + '-0').height();
-		var imageHeight1 = template.contentRight('.image-position' + (index) + '-1').height();
+function returnLargerImage(index)
+{
+	if(_config.readingDoublePage && !_config.readingWebtoon)
+	{
+		var imageHeight0 = template.contentRight('.image-position'+(index)+'-0').height();
+		var imageHeight1 = template.contentRight('.image-position'+(index)+'-1').height();
 
-		if (imageHeight1 === undefined || imageHeight0 >= imageHeight1) {
-			var image = template.contentRight('.image-position' + (index) + '-0');
+		if(imageHeight1 === undefined || imageHeight0 >= imageHeight1)
+		{
+			var image = template.contentRight('.image-position'+(index)+'-0');
 		}
-		else {
-			var image = template.contentRight('.image-position' + (index) + '-1');
+		else
+		{
+			var image = template.contentRight('.image-position'+(index)+'-1');
 		}
 	}
-	else {
-		var image = template.contentRight('.image-position' + (index) + '-0');
+	else
+	{
+		var image = template.contentRight('.image-position'+(index)+'-0');
 	}
 
 	return image;
@@ -484,11 +552,12 @@ function returnLargerImage(index) {
 var currentPageVisibility = 0, maxPageVisibility = 0, currentPageStart = true, readingDirection = true, disableOnScrollST = false;
 
 //Go to a specific comic index
-function goToIndex(index, animation = true, nextPrevious = false, end = false) {
+function goToIndex(index, animation = true, nextPrevious = false, end = false)
+{
 	var animationDurationS = ((animation) ? _config.readingViewSpeed : 0);
 	var animationDurationMS = animationDurationS * 1000;
 
-	if (currentScale != 1 && animation)
+	if(currentScale != 1 && animation)
 		reading.resetZoom();
 
 	var content = template.contentRight().children('div');
@@ -503,97 +572,110 @@ function goToIndex(index, animation = true, nextPrevious = false, end = false) {
 
 	var imgHeight = false;
 
-	if (((nextPrevious && currentPageStart) || !nextPrevious || end) && (readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon))) {
-		image = returnLargerImage(eIndex - 1);
+	if(((nextPrevious && currentPageStart) || !nextPrevious || end) && (readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)))
+	{
+		image = returnLargerImage(eIndex-1);
 
 		imgHeight = image.height() + _config.readingMargin.top;
 
-		if (imgHeight > contentHeight) {
+		if(imgHeight > contentHeight)
+		{
 			var pageVisibility = Math.floor(imgHeight / contentHeight)
 
 			maxPageVisibility = pageVisibility;
 
-			if (readingDirection && !end)
+			if(readingDirection && !end)
 				currentPageVisibility = 0;
 			else
 				currentPageVisibility = pageVisibility;
 		}
-		else {
+		else
+		{
 			currentPageVisibility = 0;
 		}
 
-		if (nextPrevious !== false && nextPrevious !== true) currentPageVisibility = nextPrevious;
+		if(nextPrevious !== false && nextPrevious !== true) currentPageVisibility = nextPrevious;
 		pageVisibilityIndex = currentPageVisibility;
 
 		currentPageStart = false;
 	}
-	else if (nextPrevious && !currentPageStart && (readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon))) {
+	else if(nextPrevious && !currentPageStart && (readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)))
+	{
 		eIndex = currentIndex;
 
-		image = returnLargerImage(eIndex - 1);
+		image = returnLargerImage(eIndex-1);
 
 		imgHeight = image.height() + _config.readingMargin.top;
 
-		if (readingDirection)
+		if(readingDirection)
 			currentPageVisibility++;
 		else
 			currentPageVisibility--;
 
-		if (nextPrevious !== false && nextPrevious !== true) currentPageVisibility = nextPrevious;
+		if(nextPrevious !== false && nextPrevious !== true) currentPageVisibility = nextPrevious;
 		pageVisibilityIndex = currentPageVisibility;
 
 		var pageVisibility = Math.floor(imgHeight / contentHeight);
 
 		maxPageVisibility = pageVisibility;
 
-		if (!((readingDirection && currentPageVisibility > pageVisibility) || (!readingDirection && currentPageVisibility < 0))) {
+		if(!((readingDirection && currentPageVisibility > pageVisibility) || (!readingDirection && currentPageVisibility < 0)))
+		{
 			updateCurrentIndex = false;
 		}
-		else {
+		else
+		{
 			eIndex = index;
 
-			image = returnLargerImage(eIndex - 1);
+			image = returnLargerImage(eIndex-1);
 
 			imgHeight = image.height() + _config.readingMargin.top;
 
-			if (imgHeight > contentHeight) {
+			if(imgHeight > contentHeight)
+			{
 				pageVisibility = Math.floor(imgHeight / contentHeight)
 
-				if (readingDirection)
+				if(readingDirection)
 					currentPageVisibility = 0;
 				else
 					currentPageVisibility = pageVisibility;
 			}
-			else {
+			else
+			{
 				currentPageVisibility = 0;
 			}
 
-			if (nextPrevious !== false && nextPrevious !== true) currentPageVisibility = nextPrevious;
+			if(nextPrevious !== false && nextPrevious !== true) currentPageVisibility = nextPrevious;
 			pageVisibilityIndex = currentPageVisibility;
 			currentPageStart = false;
 		}
 	}
-	else {
+	else
+	{
 		currentPageStart = true;
 	}
 
-	if (readingViewIs('slide')) {
+	if(readingViewIs('slide'))
+	{
 		template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-			'transition': animationDurationS + 's',
-			'transform': 'translate(-' + (contentWidth * (eIndex - 1)) + 'px, 0)',
+			'transition': animationDurationS+'s',
+			'transform': 'translate(-'+(contentWidth * (eIndex - 1))+'px, 0)',
 		});
 	}
-	else if (readingViewIs('scroll')) {
-		var image = returnLargerImage(eIndex - 1);
+	else if(readingViewIs('scroll'))
+	{
+		var image = returnLargerImage(eIndex-1);
 
 		var scrollTop = (image.offset().top - content.offset().top) + content.scrollTop();
 
 		var scrollSum = 0;
 
-		if ((readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) && pageVisibilityIndex !== false) {
+		if((readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) && pageVisibilityIndex !== false)
+		{
 			imgHeight = image.height() + _config.readingMargin.top;
 
-			if (imgHeight > contentHeight) {
+			if(imgHeight > contentHeight)
+			{
 				var pageVisibility = Math.floor(imgHeight / contentHeight);
 
 				maxPageVisibility = pageVisibility;
@@ -601,28 +683,28 @@ function goToIndex(index, animation = true, nextPrevious = false, end = false) {
 				var contentHeightRes = ((contentHeight * pageVisibility) - imgHeight) / pageVisibility;
 
 				scrollSum = ((contentHeight - contentHeightRes) - contentHeight / pageVisibility) * pageVisibilityIndex;
-			}
+			}		
 		}
 
 		clearTimeout(disableOnScrollST);
 
 		disableOnScroll(1);
 
-		disableOnScrollST = setTimeout(function () {
+		disableOnScrollST = setTimeout(function(){
 
 			reading.disableOnScroll(2);
 
 		}, animationDurationMS);
 
-		content.stop(true).animate({ scrollTop: (scrollTop + scrollSum) + 'px' }, animationDurationMS);
+		content.stop(true).animate({scrollTop: (scrollTop + scrollSum)+'px'}, animationDurationMS);
 	}
 
 	var newIndex = (eIndex - 1);
 
-	if (_config.readingManga && !readingViewIs('scroll'))
+	if(_config.readingManga && !readingViewIs('scroll'))
 		newIndex = (indexNum - newIndex) - 1;
 
-	eachImagesDistribution(newIndex, ['image', 'folder'], function (image) {
+	eachImagesDistribution(newIndex, ['image', 'folder'], function(image){
 
 		goToImageCL(image.index, animation);
 
@@ -630,109 +712,125 @@ function goToIndex(index, animation = true, nextPrevious = false, end = false) {
 
 	//goToImageCL(imagesDistribution[eIndex-1][0].index, animation);
 
-	if (updateCurrentIndex)
+	if(updateCurrentIndex)
 		currentIndex = index;
 
 	var isBookmarkTrue = false;
 
-	eachImagesDistribution(newIndex, ['image', 'folder'], function (image) {
+	eachImagesDistribution(newIndex, ['image', 'folder'], function(image){
 
-		if (!isBookmarkTrue && images[image.index] && isBookmark(p.normalize(images[image.index].path)))
+		if(!isBookmarkTrue && images[image.index] && isBookmark(p.normalize(images[image.index].path)))
 			isBookmarkTrue = true;
 
 	});
 }
 
 //Go to the next comic page
-function goNext() {
+function goNext()
+{
 	saveReadingProgressA = true;
 
 	var nextIndex = currentIndex + 1;
 
 	readingDirection = true;
 
-	if (currentIndex < 1)
+	if(currentIndex < 1)
 		showPreviousComic(2, true);
-	else if (nextIndex <= indexNum || ((readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) && currentPageVisibility < maxPageVisibility))
+	else if(nextIndex <= indexNum || ((readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) && currentPageVisibility < maxPageVisibility))
 		goToIndex(nextIndex, true, true);
-	else if (currentIndex == indexNum && dom.nextComic() && (!_config.readingManga || readingViewIs('scroll')))
+	else if(currentIndex == indexNum && dom.nextComic() && (!_config.readingManga || readingViewIs('scroll')))
 		showNextComic(1, true);
-	else if (currentIndex == indexNum && dom.previousComic() && _config.readingManga && !readingViewIs('scroll'))
+	else if(currentIndex == indexNum && dom.previousComic() && _config.readingManga && !readingViewIs('scroll'))
 		showNextComic(1, true, true);
 }
 
 //Go to the previous comic page
-function goPrevious() {
+function goPrevious()
+{
 	saveReadingProgressA = true;
 
 	var previousIndex = currentIndex - 1;
 
 	readingDirection = false;
 
-	if (currentIndex > indexNum)
+	if(currentIndex > indexNum)
 		showNextComic(2, true);
-	else if (previousIndex > 0 || ((readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) && currentPageVisibility > 0))
+	else if(previousIndex > 0 || ((readingViewIs('scroll') && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) && currentPageVisibility > 0))
 		goToIndex(previousIndex, true, true)
-	else if (previousIndex == 0 && dom.previousComic() && (!_config.readingManga || readingViewIs('scroll')))
+	else if(previousIndex == 0 && dom.previousComic() && (!_config.readingManga || readingViewIs('scroll')))
 		showPreviousComic(1, true);
-	else if (previousIndex == 0 && dom.nextComic() && _config.readingManga && !readingViewIs('scroll'))
+	else if(previousIndex == 0 && dom.nextComic() && _config.readingManga && !readingViewIs('scroll'))
 		showPreviousComic(1, true, true);
 }
 
 //Go to the start of the comic
-function goStart(force = false) {
-	if (force || !_config.readingManga || readingViewIs('scroll')) {
+function goStart(force = false)
+{
+	if(force || !_config.readingManga || readingViewIs('scroll'))
+	{
 		saveReadingProgressA = true;
 
-		if (currentIndex > indexNum || (currentIndex - 1 == 0 && dom.previousComic())) {
+		if(currentIndex > indexNum || (currentIndex - 1 == 0 && dom.previousComic()))
+		{
 			goPrevious();
 		}
-		else {
+		else
+		{
 			readingDirection = true;
 
 			goToIndex(1, true);
 		}
 	}
-	else {
+	else
+	{
 		goEnd(true);
 	}
 }
 
 //Go to the end of the comic
-function goEnd(force = false) {
-	if (force || !_config.readingManga || readingViewIs('scroll')) {
+function goEnd(force = false)
+{
+	if(force || !_config.readingManga || readingViewIs('scroll'))
+	{
 		saveReadingProgressA = true;
 
-		if (currentIndex < 1 || (currentIndex == indexNum && dom.nextComic())) {
+		if(currentIndex < 1 || (currentIndex == indexNum && dom.nextComic()))
+		{
 			goNext();
 		}
-		else {
+		else
+		{
 			readingDirection = false;
 
 			goToIndex(indexNum, true, true, true);
 		}
 	}
-	else {
+	else
+	{
 		goStart(true);
 	}
 }
 
-function leftClick(e) {
+function leftClick(e)
+{
 	var isTouch = (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents) ? true : false;
 
-	if (!reading.haveZoom() && (!readingDragScroll || !readingDragScroll.start) && (!isTouch || !config.readingMagnifyingGlass)) {
-		if (isTouch)
+	if(!reading.haveZoom() && (!readingDragScroll || !readingDragScroll.start) && (!isTouch || !config.readingMagnifyingGlass))
+	{
+		if(isTouch)
 			reading.goNext();
 		else
 			reading.goPrevious();
 	}
 }
 
-function rightClick(e) {
+function rightClick(e)
+{
 	var isTouch = (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents) ? true : false;
 
-	if (!reading.haveZoom() && (!readingDragScroll || !readingDragScroll.start) && (!isTouch || !config.readingMagnifyingGlass)) {
-		if (isTouch)
+	if(!reading.haveZoom() && (!readingDragScroll || !readingDragScroll.start) && (!isTouch || !config.readingMagnifyingGlass))
+	{
+		if(isTouch)
 			reading.goPrevious();
 		else
 			reading.goNext();
@@ -742,22 +840,26 @@ function rightClick(e) {
 var showComicSkip;
 
 //Begins to show the next comic
-function showNextComic(mode, animation = true, invert = false) {
+function showNextComic(mode, animation = true, invert = false)
+{	
 	var content = template.contentRight().children('div');
 	var contentWidth = content.width();
 	var contentHeight = content.height();
 
 	clearTimeout(showComicSkip);
 
-	if (mode == 1) {
+	if(mode == 1)
+	{
 		var transition = _config.readingViewSpeed < _config.readingDelayComicSkip ? _config.readingViewSpeed : _config.readingDelayComicSkip;
 
-		if (_config.readingDelayComicSkip != 0) {
-			if (readingViewIs('slide')) {
+		if(_config.readingDelayComicSkip != 0)
+		{
+			if(readingViewIs('slide'))
+			{
 				var skip = template.contentRight('.reading-skip-right');
 
 				skip.css({
-					'transition': 'transform ' + transition + 's, background-color 0.2s, box-shadow 0.2s',
+					'transition': 'transform '+transition+'s, background-color 0.2s, box-shadow 0.2s',
 					'transform': 'translate(-100px, 0px)',
 				});
 
@@ -765,59 +867,63 @@ function showNextComic(mode, animation = true, invert = false) {
 
 				template.contentRight('.reading-body > div, .reading-lens > div > div').css({
 					'transform-origin': '0px center',
-					'transition': 'transform ' + ((animation) ? transition : 0) + 's, background-color 0.2s, box-shadow 0.2s',
+					'transition': 'transform '+((animation) ? transition : 0)+'s, background-color 0.2s, box-shadow 0.2s',
 					'transition-property': 'transform',
-					'transform': 'scale(' + scale + ') translate(-' + (contentWidth * (indexNum - 1)) + 'px, 0px)',
+					'transform': 'scale('+scale+') translate(-'+(contentWidth * (indexNum - 1))+'px, 0px)',
 				});
 			}
-			else if (readingViewIs('scroll')) {
+			else if(readingViewIs('scroll'))
+			{
 				var skip = template.contentRight('.reading-skip-bottom');
 
 				skip.css({
-					'transition': 'transform ' + transition + 's, background-color 0.2s, box-shadow 0.2s',
+					'transition': 'transform '+transition+'s, background-color 0.2s, box-shadow 0.2s',
 					'transform': 'translate(0px, -100px)',
 				});
 
 				var scale = ((contentHeight - 100) / contentHeight);
 
 				template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-					'transform-origin': 'center ' + (template.contentRight('.reading-body').height() - contentHeight) + 'px',
-					'transition': 'transform ' + ((animation) ? transition : 0) + 's, background-color 0.2s, box-shadow 0.2s',
+					'transform-origin': 'center '+(template.contentRight('.reading-body').height() - contentHeight)+'px',
+					'transition': 'transform '+((animation) ? transition : 0)+'s, background-color 0.2s, box-shadow 0.2s',
 					'transition-property': 'transform',
-					'transform': 'scale(' + scale + ')',
+					'transform': 'scale('+scale+')',
 				});
 			}
 
-			skip.find('circle').css('animation-duration', _config.readingDelayComicSkip + 's').removeClass('a').delay(10).queue(function (next) { $(this).addClass('a'); next(); });
+			skip.find('circle').css('animation-duration', _config.readingDelayComicSkip+'s').removeClass('a').delay(10).queue(function(next){$(this).addClass('a');next();});
 		}
 
-		if (invert)
-			showComicSkip = setTimeout('dom.openComic(true, "' + escapeQuotes(escapeBackSlash(dom.previousComic()), 'doubles') + '", "' + escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles') + '", true);', _config.readingDelayComicSkip * 1000);
+		if(invert)
+			showComicSkip = setTimeout('dom.openComic(true, "'+escapeQuotes(escapeBackSlash(dom.previousComic()), 'doubles')+'", "'+escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles')+'", true);', _config.readingDelayComicSkip * 1000);
 		else
-			showComicSkip = setTimeout('dom.openComic(true, "' + escapeQuotes(escapeBackSlash(dom.nextComic()), 'doubles') + '", "' + escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles') + '");', _config.readingDelayComicSkip * 1000);
+			showComicSkip = setTimeout('dom.openComic(true, "'+escapeQuotes(escapeBackSlash(dom.nextComic()), 'doubles')+'", "'+escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles')+'");', _config.readingDelayComicSkip * 1000);
 
 		currentIndex = indexNum + 1;
 	}
-	else {
-		if (readingViewIs('slide')) {
+	else
+	{
+		if(readingViewIs('slide'))
+		{
 			var skip = template.contentRight('.reading-skip-right').css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'translate(0px, 0px)',
 			});
 
 			template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
-				'transform': 'scale(1) translate(-' + (contentWidth * (indexNum - 1)) + 'px, 0px)',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
+				'transform': 'scale(1) translate(-'+(contentWidth * (indexNum - 1))+'px, 0px)',
 			});
 		}
-		else if (readingViewIs('scroll')) {
+		else if(readingViewIs('scroll'))
+		{
 			var skip = template.contentRight('.reading-skip-bottom').css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'translate(0px, 0px)',
 			});
 
 			template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'scale(1) translate(0px, 0px)',
 			});
 		}
@@ -827,88 +933,96 @@ function showNextComic(mode, animation = true, invert = false) {
 }
 
 //Begins to show the previous comic
-function showPreviousComic(mode, animation = true, invert = false) {
+function showPreviousComic(mode, animation = true, invert = false)
+{
 	var content = template.contentRight().children('div');
 	var contentWidth = content.width();
 	var contentHeight = content.height();
 
 	clearTimeout(showComicSkip);
 
-	if (mode == 1) {
+	if(mode == 1)
+	{
 
 		var transition = _config.readingViewSpeed < _config.readingDelayComicSkip ? _config.readingViewSpeed : _config.readingDelayComicSkip;
 
-		if (_config.readingDelayComicSkip != 0) {
-			if (readingViewIs('slide')) {
+		if(_config.readingDelayComicSkip != 0)
+		{
+			if(readingViewIs('slide'))
+			{
 				var skip = template.contentRight('.reading-skip-left');
 
 				skip.css({
-					'transition': 'transform ' + transition + 's, background-color 0.2s, box-shadow 0.2s',
+					'transition': 'transform '+transition+'s, background-color 0.2s, box-shadow 0.2s',
 					'transform': 'translate(100px, 0px)',
 				});
 
 				var scale = ((contentWidth - 100) / contentWidth);
 
 				template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-					'transform-origin': contentWidth + 'px center',
-					'transition': 'transform ' + ((animation) ? transition : 0) + 's, background-color 0.2s, box-shadow 0.2s',
+					'transform-origin': contentWidth+'px center',
+					'transition': 'transform '+((animation) ? transition : 0)+'s, background-color 0.2s, box-shadow 0.2s',
 					'transition-property': 'transform',
-					'transform': 'scale(' + scale + ')',
+					'transform': 'scale('+scale+')',
 				});
 
 			}
-			else if (readingViewIs('scroll')) {
+			else if(readingViewIs('scroll'))
+			{
 				var skip = template.contentRight('.reading-skip-top');
 
 				skip.css({
-					'transition': 'transform ' + transition + 's, background-color 0.2s, box-shadow 0.2s',
+					'transition': 'transform '+transition+'s, background-color 0.2s, box-shadow 0.2s',
 					'transform': 'translate(0px, 100px)',
 				});
 
 				var scale = ((contentHeight - 100) / contentHeight);
 
 				template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-					'transform-origin': 'center ' + contentHeight + 'px',
-					'transition': 'transform ' + ((animation) ? transition : 0) + 's, background-color 0.2s, box-shadow 0.2s',
+					'transform-origin': 'center '+contentHeight+'px',
+					'transition': 'transform '+((animation) ? transition : 0)+'s, background-color 0.2s, box-shadow 0.2s',
 					'transition-property': 'transform',
-					'transform': 'scale(' + scale + ')',
+					'transform': 'scale('+scale+')',
 				});
 			}
 
-			skip.find('circle').css('animation-duration', _config.readingDelayComicSkip + 's').removeClass('a').delay(10).queue(function (next) { $(this).addClass('a'); next(); });
+			skip.find('circle').css('animation-duration', _config.readingDelayComicSkip+'s').removeClass('a').delay(10).queue(function(next){$(this).addClass('a');next();});
 		}
 
-		if (invert)
-			showComicSkip = setTimeout('dom.openComic(true, "' + escapeQuotes(escapeBackSlash(dom.nextComic()), 'doubles') + '", "' + escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles') + '");', _config.readingDelayComicSkip * 1000);
+		if(invert)
+			showComicSkip = setTimeout('dom.openComic(true, "'+escapeQuotes(escapeBackSlash(dom.nextComic()), 'doubles')+'", "'+escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles')+'");', _config.readingDelayComicSkip * 1000);
 		else
-			showComicSkip = setTimeout('dom.openComic(true, "' + escapeQuotes(escapeBackSlash(dom.previousComic()), 'doubles') + '", "' + escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles') + '", true);', _config.readingDelayComicSkip * 1000);
+			showComicSkip = setTimeout('dom.openComic(true, "'+escapeQuotes(escapeBackSlash(dom.previousComic()), 'doubles')+'", "'+escapeQuotes(escapeBackSlash(dom.indexMainPathA()), 'doubles')+'", true);', _config.readingDelayComicSkip * 1000);
 
 		currentIndex = 0;
 	}
-	else {
-		if (readingViewIs('slide')) {
+	else
+	{
+		if(readingViewIs('slide'))
+		{
 			var skip = template.contentRight('.reading-skip-left');
 
 			skip.css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'translate(0px, 0px)',
 			});
 
 			template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'scale(1) translate(0px, 0px)',
 			});
 		}
-		else if (readingViewIs('scroll')) {
+		else if(readingViewIs('scroll'))
+		{
 			var skip = template.contentRight('.reading-skip-top');
 
 			skip.css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'translate(0px, 0px)',
 			});
 
 			template.contentRight('.reading-body > div, .reading-lens > div > div').css({
-				'transition': 'transform ' + _config.readingViewSpeed + 's, background-color 0.2s, box-shadow 0.2s',
+				'transition': 'transform '+_config.readingViewSpeed+'s, background-color 0.2s, box-shadow 0.2s',
 				'transform': 'scale(1) translate(0px, 0px)',
 			});
 		}
@@ -917,48 +1031,59 @@ function showPreviousComic(mode, animation = true, invert = false) {
 	}
 }
 
-var currentScale = 1, scalePrevData = { tranX: 0, tranY: 0, scale: 1 }, originalRect = false, originalRectReadingBody = false, haveZoom = false, currentZoomIndex = false;
+var currentScale = 1, scalePrevData = {tranX: 0, tranY: 0, scale: 1}, originalRect = false, originalRectReadingBody = false, haveZoom = false, currentZoomIndex = false;
 
-function applyScale(animation = true, scale = 1, center = false, zoomOut = false) {
+function applyScale(animation = true, scale = 1, center = false, zoomOut = false)
+{
 	var animationDurationS = ((animation) ? _config.readingViewSpeed : 0);
 
 	scale = Math.round(scale * 100) / 100;
 
-	if (currentZoomIndex === false) {
-		if (center || !readingViewIs('scroll')) {
+	if(currentZoomIndex === false)
+	{
+		if(center || !readingViewIs('scroll'))
+		{
 			currentZoomIndex = (currentIndex - 1);
 		}
-		else {
-			var currentRect = template.contentRight('.image-position' + (currentIndex - 1)).get(0).getBoundingClientRect();
+		else
+		{
+			var currentRect = template.contentRight('.image-position'+(currentIndex - 1)).get(0).getBoundingClientRect();
 
-			if (currentRect.top > currentPageXY.y && (currentIndex - 2) >= 0) {
+			if(currentRect.top > currentPageXY.y && (currentIndex - 2) >= 0)
+			{
 				currentZoomIndex = (currentIndex - 2);
 			}
-			else if (currentRect.top + currentRect.height < currentPageXY.y && currentIndex <= indexNum) {
+			else if(currentRect.top + currentRect.height < currentPageXY.y && currentIndex <= indexNum)
+			{
 				currentZoomIndex = currentIndex;
 			}
-			else {
+			else
+			{
 				currentZoomIndex = (currentIndex - 1);
-			}
+			}			
 		}
 	}
 
-	if (scale != scalePrevData.scale) {
-		if (originalRect === false) {
-			originalRect = template.contentRight('.image-position' + currentZoomIndex).get(0).getBoundingClientRect();
+	if(scale != scalePrevData.scale)
+	{
+		if(originalRect === false)
+		{
+			originalRect = template.contentRight('.image-position'+currentZoomIndex).get(0).getBoundingClientRect();
 			originalRectReadingBody = template.contentRight().children().get(0).getBoundingClientRect();
 		}
 
 		var scaleDiff = (scale - (scalePrevData.scale - 1));
 
-		if (!zoomOut) {
+		if(!zoomOut)
+		{
 			var pageX = currentPageXY.x - originalRect.left;
 			var pageY = currentPageXY.y - originalRect.top;
 
 			var addX = (0.5 - (pageX / originalRect.width)) * originalRect.width;
 			var addY = (0.5 - (pageY / originalRect.height)) * originalRect.height;
 
-			if (center) {
+			if(center)
+			{
 				addX = 0;
 				addY = 0;
 			}
@@ -966,29 +1091,33 @@ function applyScale(animation = true, scale = 1, center = false, zoomOut = false
 			var translateX = (scalePrevData.tranX / scalePrevData.scale * scale) + (addX / scalePrevData.scale * (scale - scalePrevData.scale));
 			var translateY = (scalePrevData.tranY / scalePrevData.scale * scale) + (addY / scalePrevData.scale * (scale - scalePrevData.scale));
 		}
-		else {
+		else
+		{
 			var translateX = scalePrevData.tranX - (scalePrevData.tranX * ((scalePrevData.scale - scale) / (scalePrevData.scale - 1)));
 			var translateY = scalePrevData.tranY - (scalePrevData.tranY * ((scalePrevData.scale - scale) / (scalePrevData.scale - 1)));
 		}
 
-		if (scale <= 1) {
+		if(scale <= 1)
+		{
 			translateX = 0;
 			translateY = 0;
 			haveZoom = false;
 		}
-		else {
+		else
+		{
 			haveZoom = true;
 		}
 
-		template.contentRight('.image-position' + currentZoomIndex).css({
-			'transition': 'transform ' + animationDurationS + 's, z-index ' + animationDurationS + 's',
-			'transform': 'translate(' + (translateX) + 'px, ' + (translateY) + 'px) scale(' + scale + ')',
+		template.contentRight('.image-position'+currentZoomIndex).css({
+			'transition': 'transform '+animationDurationS+'s, z-index '+animationDurationS+'s',
+			'transform': 'translate('+(translateX)+'px, '+(translateY)+'px) scale('+scale+')',
 			'transform-origin': 'center center',
 			'z-index': scale == 1 ? 1 : 2,
 			// 'will-change': scale == 1 ? '' : 'transform',
 		});
 
-		if (scale == 1) {
+		if(scale == 1)
+		{
 			originalRect = false;
 			currentZoomIndex = false;
 		}
@@ -1002,22 +1131,24 @@ function applyScale(animation = true, scale = 1, center = false, zoomOut = false
 }
 
 // Zoom in
-function zoomIn(animation = true, center = false) {
-	if (zoomMoveData.active)
+function zoomIn(animation = true, center = false)
+{
+	if(zoomMoveData.active)
 		return;
 
-	if (currentScale < 8)
+	if(currentScale < 8)
 		currentScale *= 1.25;
 
 	applyScale(animation, currentScale, center);
 }
 
 // Zoom out
-function zoomOut(animation = true, center = false) {
-	if (zoomMoveData.active)
+function zoomOut(animation = true, center = false)
+{
+	if(zoomMoveData.active)
 		return;
 
-	if (currentScale > 0.2)
+	if(currentScale > 0.2)
 		currentScale /= 1.25;
 
 	applyScale(animation, currentScale, center, true);
@@ -1025,15 +1156,17 @@ function zoomOut(animation = true, center = false) {
 
 
 // Reset zoom
-function resetZoom(animation = true, index = false, apply = true) {
+function resetZoom(animation = true, index = false, apply = true)
+{
 	var animationDurationS = ((animation) ? _config.readingViewSpeed : 0);
 
 	currentScale = 1;
 
-	if (apply) {
-		template.contentRight('.image-position' + currentZoomIndex).css({
-			'transition': 'transform ' + animationDurationS + 's, z-index ' + animationDurationS + 's',
-			'transform': 'scale(' + currentScale + ')',
+	if(apply)
+	{
+		template.contentRight('.image-position'+currentZoomIndex).css({
+			'transition': 'transform '+animationDurationS+'s, z-index '+animationDurationS+'s',
+			'transform': 'scale('+currentScale+')',
 			'transform-origin': 'center center',
 			'z-index': 1,
 			'will-change': '',
@@ -1041,7 +1174,7 @@ function resetZoom(animation = true, index = false, apply = true) {
 	}
 
 	originalRect = false;
-	scalePrevData = { tranX: 0, tranY: 0, scale: 1 };
+	scalePrevData = {tranX: 0, tranY: 0, scale: 1};
 	haveZoom = false;
 	zoomMoveData.active = false;
 	currentZoomIndex = false;
@@ -1049,86 +1182,95 @@ function resetZoom(animation = true, index = false, apply = true) {
 
 
 //Turn the magnifying glass on and off
-function activeMagnifyingGlass(active) {
-	if (active) {
+function activeMagnifyingGlass(active)
+{
+	if(active)
+	{
 		storage.updateVar('config', 'readingMagnifyingGlass', true);
 	}
-	else {
+	else
+	{
 		storage.updateVar('config', 'readingMagnifyingGlass', false);
 		magnifyingGlassControl(0);
 	}
 }
 
 //Magnifying glass settings
-function changeMagnifyingGlass(mode, value, save) {
+function changeMagnifyingGlass(mode, value, save)
+{
 
 	var contentRight = template.contentRight();
 
 	var paddingTop = parseInt(contentRight.css('padding-top'), 10);
-	if (!paddingTop) paddingTop = 0;
+	if(!paddingTop) paddingTop = 0;
 
 
 	var width = contentRight.width(),
-		height = contentRight.height(),
-		offset = contentRight.offset();
+	height = contentRight.height(),
+	offset = contentRight.offset();
 
 	var pageX = (width / 2) + offset.left;
 	var pageY = (height / 2) + offset.top + paddingTop;
 
 
-	if (mode == 1) //Set the zoom
+	if(mode == 1) //Set the zoom
 	{
-		magnifyingGlassControl(1, { pageX: pageX, pageY: pageY, originalEvent: { touches: false } }, { zoom: value });
+		magnifyingGlassControl(1, {pageX: pageX, pageY: pageY, originalEvent: {touches: false}}, {zoom: value});
 
-		if (save) storage.updateVar('config', 'readingMagnifyingGlassZoom', value);
+		if(save) storage.updateVar('config', 'readingMagnifyingGlassZoom', value);
 	}
-	else if (mode == 2) //Set the size
+	else if(mode == 2) //Set the size
 	{
-		magnifyingGlassControl(1, { pageX: pageX, pageY: pageY, originalEvent: { touches: false } }, { size: value });
+		magnifyingGlassControl(1, {pageX: pageX, pageY: pageY, originalEvent: {touches: false}}, {size: value});
 
-		if (save) storage.updateVar('config', 'readingMagnifyingGlassSize', value);
+		if(save) storage.updateVar('config', 'readingMagnifyingGlassSize', value);
 	}
-	else if (mode == 3) //Set the ratio
+	else if(mode == 3) //Set the ratio
 	{
-		magnifyingGlassControl(1, { pageX: pageX, pageY: pageY, originalEvent: { touches: false } }, { ratio: value });
+		magnifyingGlassControl(1, {pageX: pageX, pageY: pageY, originalEvent: {touches: false}}, {ratio: value});
 
-		if (save) storage.updateVar('config', 'readingMagnifyingGlassRatio', value);
+		if(save) storage.updateVar('config', 'readingMagnifyingGlassRatio', value);
 	}
-	else if (mode == 4) //Set the radius
+	else if(mode == 4) //Set the radius
 	{
-		magnifyingGlassControl(1, { pageX: pageX, pageY: pageY, originalEvent: { touches: false } }, { radius: value });
+		magnifyingGlassControl(1, {pageX: pageX, pageY: pageY, originalEvent: {touches: false}}, {radius: value});
 
-		if (save) storage.updateVar('config', 'readingMagnifyingGlassRadius', value);
+		if(save) storage.updateVar('config', 'readingMagnifyingGlassRadius', value);
 	}
 }
 
 var magnifyingGlassView = false;
 
 //Magnifying glass control
-function magnifyingGlassControl(mode, e = false, lensData = false) {
+function magnifyingGlassControl(mode, e = false, lensData = false)
+{
 
-	if (e) {
+	if(e)
+	{
 		var x = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : (e.pageX ? e.pageX : e.clientX);
 		var y = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : (e.pageY ? e.pageY : e.clientY);
 	}
 
-	if (mode == 1) {
+	if(mode == 1)
+	{
 
-		if (lensData && typeof lensData.ratio != 'undefined')
+		if(lensData && typeof lensData.ratio != 'undefined')
 			var ratio = 1 / lensData.ratio;
 		else
 			var ratio = 1 / config.readingMagnifyingGlassRatio;
 
-		if (lensData && typeof lensData.size != 'undefined') {
+		if(lensData && typeof lensData.size != 'undefined')
+		{
 			var lensWidth = lensData.size;
 			var lensHeight = parseInt(lensData.size * ratio);
 		}
-		else {
+		else
+		{
 			var lensWidth = config.readingMagnifyingGlassSize;
 			var lensHeight = parseInt(config.readingMagnifyingGlassSize * ratio);
 		}
 
-		if (lensData && typeof lensData.zoom != 'undefined')
+		if(lensData && typeof lensData.zoom != 'undefined')
 			var zoom = lensData.zoom;
 		else
 			var zoom = config.readingMagnifyingGlassZoom;
@@ -1145,20 +1287,21 @@ function magnifyingGlassControl(mode, e = false, lensData = false) {
 		var leftLens = x - offset.left - lensWidthM;
 
 		template.contentRight('.reading-lens').css({
-			'transform': 'translate(' + left + 'px, ' + top + 'px)',
-			'width': lensWidth + 'px',
-			'height': lensHeight + 'px',
-			'border-radius': ((lensData && typeof lensData.radius != 'undefined') ? lensData.radius : config.readingMagnifyingGlassRadius) + 'px'
+			'transform': 'translate('+left+'px, '+top+'px)',
+			'width': lensWidth+'px',
+			'height': lensHeight+'px',
+			'border-radius': ((lensData && typeof lensData.radius != 'undefined') ? lensData.radius : config.readingMagnifyingGlassRadius)+'px'
 		}).removeClass('d h').addClass('a');
 
 		template.contentRight('.reading-lens > div').css({
-			'transform': ' scale(' + zoom + ') translate(' + (-(leftLens)) + 'px, ' + (-(topLens)) + 'px)'
+			'transform': ' scale('+zoom+') translate(' + (-(leftLens)) + 'px, ' + (-(topLens)) + 'px)'
 		});
 
 		magnifyingGlassView = true;
 
 	}
-	else {
+	else
+	{
 		template.contentRight('.reading-lens').removeClass('a').addClass('d');
 		magnifyingGlassView = false;
 	}
@@ -1167,8 +1310,10 @@ function magnifyingGlassControl(mode, e = false, lensData = false) {
 
 }
 
-function resizedWindow() {
-	if (onReading) {
+function resizedWindow()
+{
+	if(onReading)
+	{
 		disposeImages();
 		calculateView();
 		stayInLine();
@@ -1179,16 +1324,20 @@ function resizedWindow() {
 
 var hiddenContentLeft = false, hiddenBarHeader = false, hideContentDisableTransitionsST = false, hideContentST = false, hideContentRunningST = false, shownContentLeft = false, shownBarHeader = false;
 
-function hideContent(fullScreen = false, first = false) {
-	if (!onReading) {
+function hideContent(fullScreen = false, first = false)
+{
+	if(!onReading)
+	{
 		var _hideContentLeft = false;
 		var _hideBarHeader = false;
 	}
-	else if (fullScreen) {
+	else if(fullScreen)
+	{
 		var _hideContentLeft = config.readingHideContentLeftFullScreen;
 		var _hideBarHeader = config.readingHideBarHeaderFullScreen;
 	}
-	else {
+	else
+	{
 		var _hideContentLeft = config.readingHideContentLeft;
 		var _hideBarHeader = config.readingHideBarHeader;
 	}
@@ -1197,7 +1346,7 @@ function hideContent(fullScreen = false, first = false) {
 
 	$('.bar-header, .content-left').css('transition', '0s');
 
-	hideContentDisableTransitionsST = setTimeout(function () {
+	hideContentDisableTransitionsST = setTimeout(function(){
 
 		$('.bar-header, .content-left').css('transition', '');
 
@@ -1205,34 +1354,39 @@ function hideContent(fullScreen = false, first = false) {
 
 	var app = $('.app');
 
-	if (_hideContentLeft) {
+	if(_hideContentLeft)
+	{
 		app.addClass('hide-content-left');
 		hiddenContentLeft = true;
 	}
-	else {
+	else
+	{
 		app.removeClass('hide-content-left');
 		$('.content-left').removeClass('show');
 		hiddenContentLeft = false;
 	}
 
-	if (_hideBarHeader) {
+	if(_hideBarHeader)
+	{
 		app.addClass('hide-bar-header');
 		hiddenBarHeader = true;
 	}
-	else {
+	else
+	{
 		app.removeClass('hide-bar-header');
 		$('.bar-header').removeClass('show');
 		hiddenBarHeader = false;
 	}
 
-	if (!first && onReading)
+	if(!first && onReading)
 		resizedWindow();
 }
 
-function hideBarHeader(value = false) {
+function hideBarHeader(value = false)
+{
 	var isFullScreen = electron.remote.getCurrentWindow().isFullScreen();
 
-	if (isFullScreen)
+	if(isFullScreen)
 		storage.updateVar('config', 'readingHideBarHeaderFullScreen', value);
 	else
 		storage.updateVar('config', 'readingHideBarHeader', value);
@@ -1240,10 +1394,11 @@ function hideBarHeader(value = false) {
 	hideContent(isFullScreen);
 }
 
-function hideContentLeft(value = false) {
+function hideContentLeft(value = false)
+{
 	var isFullScreen = electron.remote.getCurrentWindow().isFullScreen();
 
-	if (isFullScreen)
+	if(isFullScreen)
 		storage.updateVar('config', 'readingHideContentLeftFullScreen', value);
 	else
 		storage.updateVar('config', 'readingHideContentLeft', value);
@@ -1251,7 +1406,8 @@ function hideContentLeft(value = false) {
 	hideContent(isFullScreen);
 }
 
-function loadReadingMoreOptions() {
+function loadReadingMoreOptions()
+{
 	var isFullScreen = electron.remote.getCurrentWindow().isFullScreen();
 
 	handlebarsContext.hideContent = {
@@ -1264,11 +1420,12 @@ function loadReadingMoreOptions() {
 	events.events();
 }
 
-function readingViewIs(value) {
-	if (value == 'scroll' && _config.readingWebtoon)
+function readingViewIs(value)
+{
+	if(value == 'scroll' && _config.readingWebtoon)
 		return true;
 
-	if (_config.readingView == value && !_config.readingWebtoon)
+	if(_config.readingView == value && !_config.readingWebtoon)
 		return true;
 
 	return false;
@@ -1276,32 +1433,39 @@ function readingViewIs(value) {
 
 var activeOnScroll = true;
 
-function disableOnScroll(mode) {
-	if (mode == 1)
+function disableOnScroll(mode)
+{
+	if(mode == 1)
 		activeOnScroll = false;
 	else
 		activeOnScroll = true;
 }
 
-function setReadingDragScroll(dragScroll) {
+function setReadingDragScroll(dragScroll)
+{
 	readingDragScroll = dragScroll;
 }
 
-function updateReadingPagesConfig(key, value) {
-	_config[key] = value;
+function updateReadingPagesConfig(key, value)
+{
+	_config[key] = value; 
 
-	if (currentReadingConfigKey === false) {
+	if(currentReadingConfigKey === false)
+	{
 		var readingPagesConfig = storage.getKey('readingPagesConfig', dom.indexMainPathA());
-		if (!readingPagesConfig || readingPagesConfig.configKey > 0) {
-			if (readingPagesConfig && readingPagesConfig.configKey > 0) {
+		if(!readingPagesConfig || readingPagesConfig.configKey > 0)
+		{
+			if(readingPagesConfig && readingPagesConfig.configKey > 0)
+			{
 				var readingShortcutPagesConfig = storage.getKey('readingShortcutPagesConfig', readingPagesConfig.configKey);
 
-				if (readingShortcutPagesConfig)
+				if(readingShortcutPagesConfig)
 					readingPagesConfig = copy(readingShortcutPagesConfig);
 				else
 					readingPagesConfig = copy(config);
 			}
-			else {
+			else
+			{
 				readingPagesConfig = copy(config);
 			}
 		}
@@ -1313,42 +1477,47 @@ function updateReadingPagesConfig(key, value) {
 
 		storage.updateVar('readingPagesConfig', dom.indexMainPathA(), readingPagesConfig);
 	}
-	else if (currentReadingConfigKey > 0) {
+	else if(currentReadingConfigKey > 0)
+	{
 		var readingShortcutPagesConfig = storage.getKey('readingShortcutPagesConfig', currentReadingConfigKey);
 
-		if (readingShortcutPagesConfig) {
+		if(readingShortcutPagesConfig)
+		{		
 			readingShortcutPagesConfig[key] = value;
 
 			storage.updateVar('readingShortcutPagesConfig', currentReadingConfigKey, readingShortcutPagesConfig);
 		}
 	}
-	else if (currentReadingConfigKey == 0) {
+	else if(currentReadingConfigKey == 0)
+	{
 		storage.updateVar('config', key, value);
 	}
 }
 
 //Controls the page view
-function changePagesView(mode, value, save) {
-	if (currentScale != 1)
+function changePagesView(mode, value, save)
+{
+	if(currentScale != 1)
 		reading.resetZoom(true, false, false);
 
 	var imageIndex = false;
 
 	var newIndex = (currentIndex - 1);
 
-	if (_config.readingManga && !readingViewIs('scroll'))
+	if(_config.readingManga && !readingViewIs('scroll'))
 		newIndex = (indexNum - newIndex) - 1;
 
-	eachImagesDistribution(newIndex, ['image'], function (image) {
+	eachImagesDistribution(newIndex, ['image'], function(image){
 
-		if (!imageIndex)
+		if(!imageIndex)
 			imageIndex = image.index;
 
 	});
 
-	if (!imageIndex) imageIndex = currentIndex;
+	if(!imageIndex) imageIndex = currentIndex;
 
-	if (mode == 0) {
+	if(mode == 0)
+	{
 		loadReadingPages();
 
 		template.loadContentRight('reading.content.right.html', true);
@@ -1356,18 +1525,19 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 1) // Set the scroll mode
+	else if(mode == 1) // Set the scroll mode
 	{
 		updateReadingPagesConfig('readingView', value);
 
-		dom.selectElement('.pages-' + value);
+		dom.selectElement('.pages-'+value);
 
-		if (value == 'slide' && (_config.readingViewAdjustToWidth || _config.readingWebtoon)) {
+		if(value == 'slide' && (_config.readingViewAdjustToWidth || _config.readingWebtoon))
+		{
 			//storage.updateVar('config', 'readingViewAdjustToWidth', false);
 			//template.globalElement('.reading-ajust-to-width .switch').removeClass('a');
 		}
 
-		if (value == 'slide')
+		if(value == 'slide')
 			template.globalElement('.reading-ajust-to-width').addClass('disable-pointer');
 		else
 			template.globalElement('.reading-ajust-to-width').removeClass('disable-pointer');
@@ -1377,13 +1547,13 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 2) // Sets the margin of the pages
+	else if(mode == 2) // Sets the margin of the pages
 	{
-		disposeImages({ margin: value });
+		disposeImages({margin: value});
 
-		if (save) updateReadingPagesConfig('readingMargin', { margin: value, top: value, bottom: value, left: value, right: value });
+		if(save) updateReadingPagesConfig('readingMargin', {margin: value, top: value, bottom: value, left: value, right: value});
 	}
-	else if (mode == 3) // Set width adjustment
+	else if(mode == 3) // Set width adjustment
 	{
 		updateReadingPagesConfig('readingViewAdjustToWidth', value);
 
@@ -1392,17 +1562,17 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 4) // Set the speed of the animation when changing pages
+	else if(mode == 4) // Set the speed of the animation when changing pages
 	{
-		if (save) updateReadingPagesConfig('readingViewSpeed', value);
+		if(save) updateReadingPagesConfig('readingViewSpeed', value);
 	}
-	else if (mode == 5) // Set the delay when skip from comic
+	else if(mode == 5) // Set the delay when skip from comic
 	{
-		if (save) updateReadingPagesConfig('config', 'readingDelayComicSkip', value);
+		if(save) updateReadingPagesConfig('config', 'readingDelayComicSkip', value);
 	}
-	else if (mode == 6) // Set the reading to double page
+	else if(mode == 6) // Set the reading to double page
 	{
-		if (value)
+		if(value)
 			$('.reading-do-not-apply-to-horizontals, .reading-blank-page').removeClass('disable-pointer');
 		else
 			$('.reading-do-not-apply-to-horizontals, .reading-blank-page').addClass('disable-pointer');
@@ -1414,7 +1584,7 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 7) // Disables double-page reading in horizontal images
+	else if(mode == 7) // Disables double-page reading in horizontal images
 	{
 		updateReadingPagesConfig('readingDoNotApplyToHorizontals', value);
 
@@ -1423,7 +1593,7 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 8) // Manga reading, invert the direction and double pages
+	else if(mode == 8) // Manga reading, invert the direction and double pages
 	{
 		updateReadingPagesConfig('readingManga', value);
 
@@ -1432,18 +1602,20 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 9) // Webtoon reading, scroll reading and adjust to width
+	else if(mode == 9) // Webtoon reading, scroll reading and adjust to width
 	{
 		updateReadingPagesConfig('readingWebtoon', value);
 
-		if (value) {
+		if(value)
+		{
 			template.globalElement('.pages-slide, .pages-scroll, .reading-reading-manga, .reading-double-page, .reading-do-not-apply-to-horizontals, .reading-blank-page, .reading-ajust-to-width').addClass('disable-pointer');
 		}
-		else {
-			if (_config.readingView == 'scroll')
+		else
+		{
+			if(_config.readingView == 'scroll')
 				template.globalElement('.reading-ajust-to-width').removeClass('disable-pointer');
-
-			if (_config.readingDoublePage)
+			
+			if(_config.readingDoublePage)
 				template.globalElement('.reading-do-not-apply-to-horizontals, .reading-blank-page').removeClass('disable-pointer');
 
 			template.globalElement('.pages-slide, .pages-scroll, .reading-reading-manga, .reading-double-page').removeClass('disable-pointer');
@@ -1454,21 +1626,21 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 10) // Set horizontal margin of the pages
+	else if(mode == 10) // Set horizontal margin of the pages
 	{
-		disposeImages({ left: value, right: value });
+		disposeImages({left: value, right: value});
 		stayInLine();
 
-		if (`save`) updateReadingPagesConfig('readingMargin', { margin: _config.readingMargin.margin, top: _config.readingMargin.top, bottom: _config.readingMargin.bottom, left: value, right: value });
+		if(save) updateReadingPagesConfig('readingMargin', {margin: _config.readingMargin.margin, top: _config.readingMargin.top, bottom: _config.readingMargin.bottom, left: value, right: value});
 	}
-	else if (mode == 11) // Set vertical margin of the pages
+	else if(mode == 11) // Set vertical margin of the pages
 	{
-		disposeImages({ top: value, bottom: value });
+		disposeImages({top: value, bottom: value});
 		stayInLine();
 
-		if (save) updateReadingPagesConfig('readingMargin', { margin: _config.readingMargin.margin, top: value, bottom: value, left: _config.readingMargin.left, right: _config.readingMargin.right });
+		if(save) updateReadingPagesConfig('readingMargin', {margin: _config.readingMargin.margin, top: value, bottom: value, left: _config.readingMargin.left, right: _config.readingMargin.right});
 	}
-	else if (mode == 12) // Add blank page at first
+	else if(mode == 12) // Add blank page at first
 	{
 		updateReadingPagesConfig('readingBlankPage', value);
 
@@ -1477,26 +1649,26 @@ function changePagesView(mode, value, save) {
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 13) // Set width adjustment
+	else if(mode == 13) // Set width adjustment
 	{
 		updateReadingPagesConfig('readingHorizontalsMarginActive', value);
 
 		template.loadContentRight('reading.content.right.html', true);
 		addHtmlImages();
 
-		if (value)
+		if(value)
 			template.globalElement('.reading-horizontals-margin').removeClass('disable-pointer');
 		else
 			template.globalElement('.reading-horizontals-margin').addClass('disable-pointer');
 
 		read(readingCurrentPath, imageIndex);
 	}
-	else if (mode == 14) // Set horizontal margin of the horizontals pages
+	else if(mode == 14) // Set horizontal margin of the horizontals pages
 	{
-		disposeImages({ horizontalsLeft: value, horizontalsRight: value });
+		disposeImages({horizontalsLeft: value, horizontalsRight: value});
 		stayInLine();
 
-		if (save) updateReadingPagesConfig('readingHorizontalsMargin', { margin: _config.readingHorizontalsMargin.margin, top: _config.readingHorizontalsMargin.top, bottom: _config.readingHorizontalsMargin.bottom, left: value, right: value });
+		if(save) updateReadingPagesConfig('readingHorizontalsMargin', {margin: _config.readingHorizontalsMargin.margin, top: _config.readingHorizontalsMargin.top, bottom: _config.readingHorizontalsMargin.bottom, left: value, right: value});
 	}
 	/*else if(mode == 15) // Set vertical margin of the horizontals pages
 	{
@@ -1508,92 +1680,113 @@ function changePagesView(mode, value, save) {
 }
 
 //Change the bookmark icon
-function activeBookmark(mode) {
-	if (mode == 1) {
+function activeBookmark(mode)
+{
+	if(mode == 1)
+	{
 		template.barHeader('.button-bookmark').html('bookmark').attr('hover-text', language.reading.removeBookmark);
 	}
-	else {
+	else
+	{
 		template.barHeader('.button-bookmark').html('bookmark_border').attr('hover-text', language.reading.addBookmark);
 	}
 }
 
 //Check if a path is a marker
-function isBookmark(path) {
+function isBookmark(path)
+{
 	let i = false;
 
-	for (let key in readingCurrentBookmarks) {
-		if (readingCurrentBookmarks[key].path === path) {
+	for(let key in readingCurrentBookmarks)
+	{
+		if(readingCurrentBookmarks[key].path === path)
+		{
 			i = key;
 			break;
 		}
 	}
 
-	if (i !== false) {
+	if(i !== false)
+	{
 		activeBookmark(1);
 		return true;
 	}
-	else {
+	else
+	{
 		activeBookmark(2);
 		return false;
 	}
 }
 
 //Create and delete bookmarks
-function createAndDeleteBookmark(index = false) {
+function createAndDeleteBookmark(index = false)
+{
 	let imageIndex = false;
 
-	if (!index) {
+	if(!index)
+	{
 		let imageBookmark = false;
 
 		var newIndex = (currentIndex - 1);
 
-		if (_config.readingManga && !readingViewIs('scroll'))
+		if(_config.readingManga && !readingViewIs('scroll'))
 			newIndex = (indexNum - newIndex) - 1;
 
-		eachImagesDistribution(newIndex, ['image'], function (image) {
+		eachImagesDistribution(newIndex, ['image'], function(image){
 
-			if (!imageIndex)
+			if(!imageIndex)
 				imageIndex = image.index;
 
-			if (isBookmark(p.normalize(images[image.index].path))) {
-				if (imageBookmark) {
+			if(isBookmark(p.normalize(images[image.index].path)))
+			{
+				if(imageBookmark)
+				{
 					createAndDeleteBookmark(image.index);
 				}
-				else {
+				else
+				{
 					imageBookmark = true;
 					imageIndex = image.index;
-				}
+				}	
 			}
 		});
 	}
-	else {
+	else
+	{
 		imageIndex = index;
 	}
 
-	if (currentIndex <= contentNum && currentIndex > 0 && imageIndex) {
+	if(currentIndex <= contentNum && currentIndex > 0 && imageIndex)
+	{
 		var path = p.normalize(images[imageIndex].path);
 
-		if (typeof readingCurrentBookmarks !== 'undefined') {
+		if(typeof readingCurrentBookmarks !== 'undefined')
+		{
 			let i = false;
 
-			for (let key in readingCurrentBookmarks) {
-				if (readingCurrentBookmarks[key].path === path) {
+			for(let key in readingCurrentBookmarks)
+			{
+				if(readingCurrentBookmarks[key].path === path)
+				{
 					i = key;
 					break;
 				}
 			}
 
-			if (i !== false) {
+			if(i !== false)
+			{
 				readingCurrentBookmarks.splice(i, 1);
 				activeBookmark(2);
 			}
-			else {
-				readingCurrentBookmarks.push({ path: path, index: imagesPath[path] });
+			else
+			{
+				readingCurrentBookmarks.push({path: path, index: imagesPath[path]});
 				activeBookmark(1);
 			}
 		}
-		else {
-			readingCurrentBookmarks = [{ path: path, index: imagesPath[path] }];
+		else
+		{
+			readingCurrentBookmarks = [{path: path, index: imagesPath[path]}];
 			activeBookmark(1);
 		}
 
@@ -1604,31 +1797,33 @@ function createAndDeleteBookmark(index = false) {
 var saveReadingProgressA = false;
 
 //Save current reading progress
-function saveReadingProgress(path = false) {
-	if (!onReading)
+function saveReadingProgress(path = false)
+{
+	if(!onReading)
 		return;
 
-	if (!saveReadingProgressA)
+	if(!saveReadingProgressA)
 		return;
 
 	var mainPath = dom.indexMainPathA();
 
-	if (!path) {
+	if(!path)
+	{
 		let imageIndex = false;
 
 		var newIndex = (currentIndex - 1);
 
-		if (_config.readingManga && !readingViewIs('scroll'))
+		if(_config.readingManga && !readingViewIs('scroll'))
 			newIndex = (indexNum - newIndex) - 1;
 
-		eachImagesDistribution(newIndex, ['image'], function (image) {
+		eachImagesDistribution(newIndex, ['image'], function(image){
 
-			if (!imageIndex)
+			if(!imageIndex)
 				imageIndex = image.index;
 
 		});
 
-		if (imageIndex === false)
+		if(imageIndex === false)
 			imageIndex = Object.keys(images)[0];
 
 		path = p.normalize(images[imageIndex].path);
@@ -1636,8 +1831,10 @@ function saveReadingProgress(path = false) {
 
 	var comic = false, comicIndex = 0, comics = storage.get('comics');
 
-	for (let i in comics) {
-		if (comics[i].path == mainPath) {
+	for(let i in comics)
+	{
+		if(comics[i].path == mainPath)
+		{
 			comic = comics[i];
 			comicIndex = i;
 			break;
@@ -1650,7 +1847,8 @@ function saveReadingProgress(path = false) {
 		progress: 0,
 	});
 
-	if (comic && path) {
+	if(comic && path)
+	{
 		comic.readingProgress.path = imagesPath[path];
 		comic.readingProgress.path = path;
 		comic.readingProgress.lastReading = +new Date();
@@ -1662,20 +1860,23 @@ function saveReadingProgress(path = false) {
 }
 
 //Load the bookmarks in the current directory
-function loadBookmarks() {
+function loadBookmarks()
+{
 	var bookmarksPath = {}, mainPath = dom.indexMainPathA();
 
-	for (let key in readingCurrentBookmarks) {
-		if (typeof readingCurrentBookmarks[key].path != 'undefined') {
+	for(let key in readingCurrentBookmarks)
+	{
+		if(typeof readingCurrentBookmarks[key].path != 'undefined')
+		{
 			var bookmark = readingCurrentBookmarks[key];
 
 			var bookmarkDirname = p.dirname(bookmark.path);
 
-			if (typeof bookmarksPath[bookmarkDirname] === 'undefined') bookmarksPath[bookmarkDirname] = [];
+			if(typeof bookmarksPath[bookmarkDirname] === 'undefined') bookmarksPath[bookmarkDirname] = [];
 
 			let sha = sha1(bookmark.path);
 
-			var thumbnail = cache.returnCacheImage(file.realPath(bookmark.path), sha, function (data) {
+			var thumbnail = cache.returnCacheImage(file.realPath(bookmark.path), sha, function(data){
 
 				dom.addImageToDom(data.sha, data.path);
 
@@ -1694,7 +1895,8 @@ function loadBookmarks() {
 
 	var bookmarks = [];
 
-	for (let path in bookmarksPath) {
+	for(let path in bookmarksPath)
+	{
 		bookmarksPath[path].sort(function (a, b) {
 
 			if (parseInt(a['index']) > parseInt(b['index'])) return 1;
@@ -1715,12 +1917,13 @@ function loadBookmarks() {
 
 	var readingProgress = storage.getKey('readingProgress', dom.indexMainPathA());
 
-	if (readingProgress) {
+	if(readingProgress)
+	{
 		var bookmarkDirname = p.dirname(readingProgress.path);
 
 		let sha = sha1(readingProgress.path);
 
-		var thumbnail = cache.returnCacheImage(file.realPath(readingProgress.path), sha, function (data) {
+		var thumbnail = cache.returnCacheImage(file.realPath(readingProgress.path), sha, function(data){
 
 			dom.addImageToDom(data.sha, data.path);
 
@@ -1744,9 +1947,9 @@ function loadBookmarks() {
 
 	bookmarks.sort(function (a, b) {
 
-		if (a.current || a.continueReading) return -1;
+		if(a.current || a.continueReading) return -1;
 
-		if (b.current && !a.continueReading) return 1;
+		if(b.current && !a.continueReading) return 1;
 
 		return dom.orderBy(a, b, 'simple', 'path');
 	});
@@ -1758,34 +1961,40 @@ function loadBookmarks() {
 
 var currentReadingConfigKey = false;
 
-function loadReadingConfig(key = false) {
+function loadReadingConfig(key = false)
+{
 	_config = copy(config);
 
 	currentReadingConfigKey = key;
 
-	if (key === false) {
+	if(key === false)
+	{
 		var readingPagesConfig = storage.getKey('readingPagesConfig', dom.indexMainPathA());
 
-		if (readingPagesConfig) {
-			if (readingPagesConfig.configKey)
+		if(readingPagesConfig)
+		{
+			if(readingPagesConfig.configKey)
 				key = readingPagesConfig.configKey;
 			else
-				_config = { ..._config, ...readingPagesConfig, key: readingPagesConfig.configKey };
+				_config = {..._config, ...readingPagesConfig, key: readingPagesConfig.configKey};
 		}
-		else {
+		else
+		{
 			_config.key = 0;
 		}
 	}
 
-	if (key > 0) {
+	if(key > 0)
+	{
 		var readingShortcutPagesConfig = storage.getKey('readingShortcutPagesConfig', key);
 
-		if (readingShortcutPagesConfig)
-			_config = { ..._config, ...readingShortcutPagesConfig };
+		if(readingShortcutPagesConfig)
+			_config = {..._config, ...readingShortcutPagesConfig};
 
 		_config.key = key;
 	}
-	else if (key === 0) {
+	else if(key === 0)
+	{
 		_config.key = 0;
 	}
 
@@ -1794,7 +2003,8 @@ function loadReadingConfig(key = false) {
 	handlebarsContext._config = _config;
 }
 
-function loadReadingPages(key = false, edit = false) {
+function loadReadingPages(key = false, edit = false)
+{
 	loadReadingConfig(key);
 
 	handlebarsContext.readingGlobalConfigName = config.readingConfigName ? config.readingConfigName : language.reading.pages.readingGlobal;
@@ -1808,14 +2018,17 @@ function loadReadingPages(key = false, edit = false) {
 	events.events();
 }
 
-function setReadingShortcutPagesConfig(key = 0, desactiveMenu = true) {
-	if (key == 0) {
+function setReadingShortcutPagesConfig(key = 0, desactiveMenu = true)
+{
+	if(key == 0)
+	{
 		storage.updateVar('readingPagesConfig', dom.indexMainPathA(), null);
 	}
-	else {
+	else
+	{
 		var readingPagesConfig = storage.getKey('readingPagesConfig', dom.indexMainPathA());
 
-		if (!readingPagesConfig) readingPagesConfig = {};
+		if(!readingPagesConfig) readingPagesConfig = {};
 		readingPagesConfig.configKey = key;
 
 		storage.updateVar('readingPagesConfig', dom.indexMainPathA(), readingPagesConfig);
@@ -1823,11 +2036,12 @@ function setReadingShortcutPagesConfig(key = 0, desactiveMenu = true) {
 
 	changePagesView(0);
 
-	if (desactiveMenu)
+	if(desactiveMenu)
 		events.desactiveMenu('#reading-pages', '.bar-right-buttons .button-book-open-page-variant');
 }
 
-function editReadingShortcutPagesConfig(event, key = 0) {
+function editReadingShortcutPagesConfig(event, key = 0)
+{
 	event.stopPropagation();
 
 	loadReadingPages(key, true);
@@ -1837,11 +2051,14 @@ function editReadingShortcutPagesConfig(event, key = 0) {
 	loadReadingPages(key, true);
 }
 
-function editReadingShortcutPagesConfigName(key = 0, save = false) {
-	if (save) {
+function editReadingShortcutPagesConfigName(key = 0, save = false)
+{
+	if(save)
+	{
 		var name = $('.input-config-name').val();
 
-		if (isEmpty(name.trim())) {
+		if(isEmpty(name.trim()))
+		{
 			events.snackbar({
 				key: 'newReadingShortcutPagesConfig',
 				text: language.global.valueCannotBeEmpty,
@@ -1854,14 +2071,18 @@ function editReadingShortcutPagesConfigName(key = 0, save = false) {
 				],
 			});
 		}
-		else {
-			if (key === 0) {
+		else
+		{
+			if(key === 0)
+			{
 				storage.updateVar('config', 'readingConfigName', name);
 			}
-			else {
+			else
+			{			
 				var readingShortcutPagesConfig = storage.getKey('readingShortcutPagesConfig', key);
 
-				if (readingShortcutPagesConfig) {
+				if(readingShortcutPagesConfig)
+				{			
 					readingShortcutPagesConfig['readingConfigName'] = name;
 
 					storage.updateVar('readingShortcutPagesConfig', key, readingShortcutPagesConfig);
@@ -1872,11 +2093,14 @@ function editReadingShortcutPagesConfigName(key = 0, save = false) {
 			loadReadingPages(key, true);
 		}
 	}
-	else {
-		if (key === 0) {
+	else
+	{
+		if(key === 0)
+		{
 			handlebarsContext.readingShortcutConfigName = config.readingConfigName ? config.readingConfigName : language.reading.pages.readingGlobal;
 		}
-		else {
+		else
+		{
 			var readingShortcutPagesConfig = storage.getKey('readingShortcutPagesConfig', key);
 
 			handlebarsContext.readingShortcutConfigName = readingShortcutPagesConfig ? readingShortcutPagesConfig.readingConfigName : '';
@@ -1894,18 +2118,21 @@ function editReadingShortcutPagesConfigName(key = 0, save = false) {
 				},
 				{
 					text: language.buttons.ok,
-					function: 'events.closeDialog(); reading.editReadingShortcutPagesConfigName(' + key + ', true);',
+					function: 'events.closeDialog(); reading.editReadingShortcutPagesConfigName('+key+', true);',
 				}
 			],
 		});
 	}
 }
 
-function newReadingShortcutPagesConfig(save = false) {
-	if (save) {
+function newReadingShortcutPagesConfig(save = false)
+{
+	if(save)
+	{
 		var name = $('.input-config-name').val();
 
-		if (isEmpty(name.trim())) {
+		if(isEmpty(name.trim()))
+		{
 			events.snackbar({
 				key: 'newReadingShortcutPagesConfig',
 				text: language.global.valueCannotBeEmpty,
@@ -1918,13 +2145,15 @@ function newReadingShortcutPagesConfig(save = false) {
 				],
 			});
 		}
-		else {
+		else
+		{
 			var readingShortcutPagesConfig = storage.get('readingShortcutPagesConfig');
 
 			var newKey = 0;
 
-			for (let key in readingShortcutPagesConfig) {
-				if (key > newKey)
+			for(let key in readingShortcutPagesConfig)
+			{
+				if(key > newKey)
 					newKey = key;
 			}
 
@@ -1941,7 +2170,8 @@ function newReadingShortcutPagesConfig(save = false) {
 			reading.setReadingShortcutPagesConfig(newKey, false);
 		}
 	}
-	else {
+	else
+	{
 		handlebarsContext.readingShortcutConfigName = '';
 
 		events.dialog({
@@ -1963,8 +2193,10 @@ function newReadingShortcutPagesConfig(save = false) {
 	}
 }
 
-function removeReadingShortcutPagesConfig(key, confirm = false) {
-	if (confirm) {
+function removeReadingShortcutPagesConfig(key, confirm = false)
+{
+	if(confirm)
+	{
 		// Remove from shortcut config
 		var readingShortcutPagesConfig = storage.get('readingShortcutPagesConfig');
 
@@ -1975,8 +2207,9 @@ function removeReadingShortcutPagesConfig(key, confirm = false) {
 		// Remove from comic config
 		var readingPagesConfig = storage.get('readingPagesConfig');
 
-		for (let path in readingPagesConfig) {
-			if (readingPagesConfig[path].configKey && readingPagesConfig[path].configKey === key)
+		for(let path in readingPagesConfig)
+		{
+			if(readingPagesConfig[path].configKey && readingPagesConfig[path].configKey === key)
 				delete readingPagesConfig[path];
 		}
 
@@ -1986,7 +2219,8 @@ function removeReadingShortcutPagesConfig(key, confirm = false) {
 		reading.loadReadingPages();
 		reading.changePagesView(0);
 	}
-	else {
+	else
+	{
 		handlebarsContext.readingShortcutConfigName = '';
 
 		events.dialog({
@@ -2001,7 +2235,7 @@ function removeReadingShortcutPagesConfig(key, confirm = false) {
 				},
 				{
 					text: language.buttons.remove,
-					function: 'events.closeDialog(); reading.removeReadingShortcutPagesConfig(' + key + ', true);',
+					function: 'events.closeDialog(); reading.removeReadingShortcutPagesConfig('+key+', true);',
 				}
 			],
 		});
@@ -2009,7 +2243,8 @@ function removeReadingShortcutPagesConfig(key, confirm = false) {
 }
 
 // Load supported tracking sites and favorite tracking sites
-function loadTrackigSites() {
+function loadTrackigSites()
+{
 	handlebarsContext.trackingProblem = $('.bar-right-buttons .button-tracking-sites').hasClass('tracking-problem') ? true : false;
 	handlebarsContext.trackingSites = trackingSites.list(true);
 	handlebarsContext.favoriteTrackingSites = trackingSites.listFavorite(true);
@@ -2017,11 +2252,13 @@ function loadTrackigSites() {
 	$('#tracking-sites .menu-simple').html(template.load('reading.elements.menus.tracking.sites.html'));
 }
 
-function trackingSiteToFavorite(site = '') {
+function trackingSiteToFavorite(site = '')
+{
 	var siteData = trackingSites.site(site);
 
-	if (siteData) {
-		if (siteData.config.favorite)
+	if(siteData)
+	{
+		if(siteData.config.favorite)
 			siteData.config.favorite = false;
 		else
 			siteData.config.favorite = true;
@@ -2037,42 +2274,48 @@ function trackingSiteToFavorite(site = '') {
 }
 
 //Returns an image depending on the type (Image, folder, blank)
-function eachImagesDistribution(index, contains, callback, first = false, notFound = false, onlyFirstMeet = false) {
+function eachImagesDistribution(index, contains, callback, first = false, notFound = false, onlyFirstMeet = false)
+{
 	var img = false;
-	if (contains && contains.indexOf('image') !== -1)
+	if(contains && contains.indexOf('image') !== -1)
 		img = true;
 
 	var folder = false;
-	if (contains && contains.indexOf('folder') !== -1)
+	if(contains && contains.indexOf('folder') !== -1)
 		folder = true;
 
 	var blank = false;
-	if (contains && contains.indexOf('blank') !== -1)
+	if(contains && contains.indexOf('blank') !== -1)
 		blank = true;
 
-	if (typeof imagesDistribution[index] !== 'undefined') {
+	if(typeof imagesDistribution[index] !== 'undefined')
+	{
 		each:
-		for (let key in imagesDistribution[index]) {
-			if (!contains || (img && !imagesDistribution[index][key].folder && !imagesDistribution[index][key].blank) || (folder && imagesDistribution[index][key].folder) || (blank && imagesDistribution[index][key].blank)) {
+		for(let key in imagesDistribution[index])
+		{
+			if(!contains || (img && !imagesDistribution[index][key].folder && !imagesDistribution[index][key].blank) || (folder && imagesDistribution[index][key].folder) || (blank && imagesDistribution[index][key].blank))	
+			{
 				callback(imagesDistribution[index][key]);
 
-				if (onlyFirstMeet)
+				if(onlyFirstMeet)
 					break each;
 			}
 
-			if (first)
+			if(first)
 				break each;
 		}
 	}
-	else if (notFound) {
+	else if(notFound)
+	{
 		notFound();
 	}
 }
 
-var touchTimeout, mouseOut = { lens: false, body: false }, touchStart = false, magnifyingGlassOffset = false, readingCurrentPath = false, readingCurrentBookmarks = undefined, zoomMoveData = {}, magnifyingGlassScroll = { scrollTop: false, time: 0 }, readingDragScroll = false;
+var touchTimeout, mouseOut = {lens: false, body: false}, touchStart = false, magnifyingGlassOffset = false, readingCurrentPath = false, readingCurrentBookmarks = undefined, zoomMoveData = {}, magnifyingGlassScroll = {scrollTop: false, time: 0}, readingDragScroll = false;
 
 //It starts with the reading of a comic, events, argar images, counting images ...
-function read(path, index = 1, end = false) {
+function read(path, index = 1, end = false)
+{
 	images = {}, imagesData = {}, imagesPath = {}, imagesNum = 0, contentNum = 0, imagesNumLoad = 0, currentIndex = index, foldersPosition = {}, currentScale = 1, previousScrollTop = 0;
 
 	loadReadingConfig(currentReadingConfigKey);
@@ -2081,7 +2324,7 @@ function read(path, index = 1, end = false) {
 
 	readingCurrentPath = path;
 
-	if (typeof storage.get('bookmarks') !== 'undefined' && typeof storage.get('bookmarks')[dom.indexMainPathA()] !== 'undefined')
+	if(typeof storage.get('bookmarks') !== 'undefined' && typeof storage.get('bookmarks')[dom.indexMainPathA()] !== 'undefined')
 		readingCurrentBookmarks = storage.get('bookmarks')[dom.indexMainPathA()];
 	else
 		readingCurrentBookmarks = undefined;
@@ -2099,12 +2342,13 @@ function read(path, index = 1, end = false) {
 
 	onReading = _onReading = true;
 
-	template.contentRight().on('mousewheel', function (e) {
+	template.contentRight().on('mousewheel', function(e) {
 
-		if (onReading && (e.originalEvent.ctrlKey || !readingViewIs('scroll'))) {
+		if(onReading && (e.originalEvent.ctrlKey || !readingViewIs('scroll')))
+		{
 			e.preventDefault();
 
-			if (e.originalEvent.wheelDelta / 120 > 0)
+			if(e.originalEvent.wheelDelta / 120 > 0)
 				reading.zoomIn();
 			else
 				reading.zoomOut();
@@ -2112,19 +2356,20 @@ function read(path, index = 1, end = false) {
 
 	});
 
-	template.contentRight('.reading-lens').on('mousewheel', function (e) {
+	template.contentRight('.reading-lens').on('mousewheel', function(e) {
 
-		if (onReading && !haveZoom && readingViewIs('scroll')) {
+		if(onReading && !haveZoom && readingViewIs('scroll'))
+		{
 			e.preventDefault();
 
 			var content = template.contentRight().children();
 
-			if (Date.now() - magnifyingGlassScroll.time < 300)
+			if(Date.now() - magnifyingGlassScroll.time < 300)
 				var scrollTop = magnifyingGlassScroll.scrollTop;
 			else
 				var scrollTop = content.scrollTop();
 
-			if (e.originalEvent.wheelDelta / 120 > 0)
+			if(e.originalEvent.wheelDelta / 120 > 0)
 				scrollTop -= 62;
 			else
 				scrollTop += 62;
@@ -2134,15 +2379,17 @@ function read(path, index = 1, end = false) {
 				time: Date.now(),
 			};
 
-			content.stop(true).animate({ scrollTop: scrollTop + 'px' }, 200);
+			content.stop(true).animate({scrollTop: scrollTop+'px'}, 200);
 		}
 
 	});
 
-	template.contentRight('.reading-body, .reading-lens').on('pointerdown', function (e) {
+	template.contentRight('.reading-body, .reading-lens').on('pointerdown', function(e) {
 
-		if (onReading && !haveZoom && readingViewIs('scroll')) {
-			if (e.originalEvent.pointerType != 'touch') {
+		if(onReading && !haveZoom && readingViewIs('scroll'))
+		{
+			if(e.originalEvent.pointerType != 'touch')
+			{
 				// e.preventDefault();
 
 				var content = template.contentRight().children();
@@ -2166,28 +2413,34 @@ function read(path, index = 1, end = false) {
 
 	});
 
-	$(window).on('keydown', function (e) {
+	$(window).on('keydown', function(e) {
 
-		if (onReading) {
-			if (e.keyCode == 37) {
+		if(onReading)
+		{
+			if(e.keyCode == 37)
+			{
 				goPrevious();
 			}
-			else if (e.keyCode == 38 && !readingViewIs('scroll')) {
+			else if(e.keyCode == 38 && !readingViewIs('scroll'))
+			{
 				goStart();
 			}
-			else if (e.keyCode == 39) {
+			else if(e.keyCode == 39)
+			{
 				goNext();
 			}
-			else if (e.keyCode == 40 && !readingViewIs('scroll')) {
+			else if(e.keyCode == 40 && !readingViewIs('scroll'))
+			{
 				goEnd();
 			}
 		}
-
+		
 	})
 
-	$(window).on('touchstart', function (e) {
+	$(window).on('touchstart', function(e) {
 
-		if (onReading && config.readingMagnifyingGlass) {
+		if(onReading && config.readingMagnifyingGlass)
+		{
 			touchStart = e;
 
 			magnifyingGlassOffset = template.contentRight('.reading-lens').offset();
@@ -2199,7 +2452,7 @@ function read(path, index = 1, end = false) {
 
 	});
 
-	template.contentRight(/*window*/'.reading-body, .reading-lens').on('mousemove', function (e) {
+	template.contentRight(/*window*/'.reading-body, .reading-lens').on('mousemove', function(e) {
 
 		var x = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : (e.pageX ? e.pageX : e.clientX);
 		var y = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : (e.pageY ? e.pageY : e.clientY);
@@ -2209,7 +2462,8 @@ function read(path, index = 1, end = false) {
 			y: y,
 		};
 
-		if (onReading && config.readingMagnifyingGlass && !readingTouchEvent) {
+		if(onReading && config.readingMagnifyingGlass && !readingTouchEvent)
+		{
 			var readingBody = template.contentRight('.reading-body');
 
 			var rbHeight = readingBody.height();
@@ -2218,37 +2472,42 @@ function read(path, index = 1, end = false) {
 			var rbOffsetTop = offset.top;
 			var rbOffsetLeft = offset.left;
 
-			if (x > rbOffsetLeft && y > rbOffsetTop && x < (rbWidth + rbOffsetLeft) && y < (rbHeight + rbOffsetTop)) {
+			if(x > rbOffsetLeft && y > rbOffsetTop && x < (rbWidth + rbOffsetLeft) && y < (rbHeight + rbOffsetTop))
+			{
 				magnifyingGlassControl(1, e);
 			}
-			else {
+			else
+			{
 				magnifyingGlassControl(0, e);
 			}
 		}
 
 	})
 
-	template.contentRight('.reading-body').on('mouseout', function (e) {
+	template.contentRight('.reading-body').on('mouseout', function(e) {
 
-		if (onReading && config.readingMagnifyingGlass && !readingTouchEvent) {
+		if(onReading && config.readingMagnifyingGlass && !readingTouchEvent)
+		{
 			mouseOut['body'] = true;
 
-			if (mouseOut['lens'] == true) magnifyingGlassControl(0, e);
+			if(mouseOut['lens'] == true) magnifyingGlassControl(0, e);
 		}
 
 	})
 
-	template.contentRight('.reading-body').on('mouseenter', function (e) {
+	template.contentRight('.reading-body').on('mouseenter', function(e) {
 
-		if (onReading && config.readingMagnifyingGlass && !readingTouchEvent) {
+		if(onReading && config.readingMagnifyingGlass && !readingTouchEvent)
+		{
 			mouseOut['body'] = false;
 		}
 
 	})
 
-	$(window).on('mouseout', function (e) {
+	$(window).on('mouseout', function(e) {
 
-		if (onReading && config.readingMagnifyingGlass && !readingTouchEvent) {
+		if(onReading && config.readingMagnifyingGlass && !readingTouchEvent)
+		{
 			mouseOut['lens'] = true;
 
 			var x = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : (e.pageX ? e.pageX : e.clientX);
@@ -2259,22 +2518,24 @@ function read(path, index = 1, end = false) {
 			var rbOffsetTop = template.contentRight('.reading-body').offset().top;
 			var rbOffsetLeft = template.contentRight('.reading-body').offset().left;
 
-			if (!(x > rbOffsetLeft && y > rbOffsetTop && x < (rbWidth + rbOffsetLeft) && y < (rbHeight + rbOffsetTop))) {
+			if(!(x > rbOffsetLeft && y > rbOffsetTop && x < (rbWidth + rbOffsetLeft) && y < (rbHeight + rbOffsetTop)))
+			{
 				magnifyingGlassControl(0, e);
 			}
 		}
 
 	})
 
-	template.contentRight('.reading-lens').on('mouseenter', function (e) {
+	template.contentRight('.reading-lens').on('mouseenter', function(e) {
 
-		if (onReading && config.readingMagnifyingGlass && !readingTouchEvent) {
+		if(onReading && config.readingMagnifyingGlass && !readingTouchEvent)
+		{
 			mouseOut['lens'] = false;
 		}
 
 	})
 
-	template.contentRight('.reading-lens').on('touchmove', function (e) {
+	template.contentRight('.reading-lens').on('touchmove', function(e) {
 
 		let pageX = e.originalEvent.touches[0].pageX;
 		let pageY = e.originalEvent.touches[0].pageY;
@@ -2287,7 +2548,8 @@ function read(path, index = 1, end = false) {
 			y: pageY,
 		};
 
-		if (onReading && config.readingMagnifyingGlass && !haveZoom) {
+		if(onReading && config.readingMagnifyingGlass && !haveZoom)
+		{
 			let readingLens = template.contentRight('.reading-lens');
 
 			let xLess = x - (magnifyingGlassOffset.left + (readingLens.width() / 2));
@@ -2296,14 +2558,15 @@ function read(path, index = 1, end = false) {
 			pageX = pageX - xLess;
 			pageY = pageY - yLess;
 
-			magnifyingGlassControl(1, { pageX: pageX, pageY: pageY, originalEvent: { touches: false } });
+			magnifyingGlassControl(1, {pageX: pageX, pageY: pageY, originalEvent: {touches: false}});
 		}
 
 	});
 
-	template.contentRight('.reading-body, .reading-lens').on('mousedown touchstart', function (e) {
+	template.contentRight('.reading-body, .reading-lens').on('mousedown touchstart', function(e) {
 
-		if (haveZoom) {
+		if(haveZoom)
+		{
 			e.preventDefault();
 
 			zoomMoveData = {
@@ -2317,12 +2580,12 @@ function read(path, index = 1, end = false) {
 
 	});
 
-	$(window).on('mousemove touchmove', function (e) {
+	$(window).on('mousemove touchmove', function(e) {
 
 		var x = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : (e.pageX ? e.pageX : e.clientX);
 		var y = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : (e.pageY ? e.pageY : e.clientY);
 
-		if (haveZoom && zoomMoveData.active) // Drag Image zoom
+		if(haveZoom && zoomMoveData.active) // Drag Image zoom
 		{
 			e.preventDefault();
 
@@ -2338,31 +2601,32 @@ function read(path, index = 1, end = false) {
 			var maxY = (originalRect.height * 0.5 * scalePrevData.scale - originalRect.height * 0.5) - (minDiff < 0 ? minDiff : 0);
 			var minY = (originalRect.height * -0.5 * scalePrevData.scale - originalRect.height * -0.5) - (maxDiff > 0 ? maxDiff + _config.readingMargin.top : 0);
 
-			if (x > maxX)
+			if(x > maxX)
 				x = maxX;
-			else if (x < minX)
+			else if(x < minX)
 				x = minX;
 
-			if (y > maxY)
+			if(y > maxY)
 				y = maxY;
-			else if (y < minY)
+			else if(y < minY)
 				y = minY;
 
 			zoomMoveData.tranX = x;
 			zoomMoveData.tranY = y;
 
-			template.contentRight('.image-position' + currentZoomIndex).css({
+			template.contentRight('.image-position'+currentZoomIndex).css({
 				'transition': 'transform 0s, z-index 0s',
-				'transform': 'translate(' + (x) + 'px, ' + (y) + 'px) scale(' + scalePrevData.scale + ')',
+				'transform': 'translate('+(x)+'px, '+(y)+'px) scale('+scalePrevData.scale+')',
 				'transform-origin': 'center center',
 			});
 		}
-
-		if (readingDragScroll) // Drag to scroll
+		
+		if(readingDragScroll) // Drag to scroll
 		{
 			e.preventDefault();
 
-			if (!readingDragScroll.start) {
+			if(!readingDragScroll.start)
+			{
 				readingDragScroll.start = true;
 
 				$('body').addClass('dragging');
@@ -2370,7 +2634,7 @@ function read(path, index = 1, end = false) {
 
 			var pageY = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : (e.pageY ? e.pageY : e.clientY);
 
-			if (readingDragScroll.speed.length > 2)
+			if(readingDragScroll.speed.length > 2)
 				readingDragScroll.speed.shift();
 
 			readingDragScroll.speed.push({
@@ -2381,11 +2645,13 @@ function read(path, index = 1, end = false) {
 			readingDragScroll.content.scrollTop(readingDragScroll.scrollTop - (pageY - readingDragScroll.pageY));
 		}
 
-		if (hiddenContentLeft || hiddenBarHeader) // Show content left and header bar when they are hidden
+		if(hiddenContentLeft || hiddenBarHeader) // Show content left and header bar when they are hidden
 		{
-			if (y < 48) {
-				if (hiddenBarHeader && !shownBarHeader && !shownContentLeft && !hideContentRunningST) {
-					hideContentST = setTimeout(function () {
+			if(y < 48)
+			{
+				if(hiddenBarHeader && !shownBarHeader && !shownContentLeft && !hideContentRunningST)
+				{
+					hideContentST = setTimeout(function(){
 
 						$('.bar-header').addClass('show');
 						reading.setShownBarHeader(true);
@@ -2395,9 +2661,11 @@ function read(path, index = 1, end = false) {
 					hideContentRunningST = true;
 				}
 			}
-			else if (x < 48) {
-				if (hiddenContentLeft && !shownContentLeft && !shownBarHeader && !hideContentRunningST) {
-					hideContentST = setTimeout(function () {
+			else if(x < 48)
+			{
+				if(hiddenContentLeft && !shownContentLeft && !shownBarHeader && !hideContentRunningST)
+				{
+					hideContentST = setTimeout(function(){
 
 						$('.content-left').addClass('show');
 						reading.setShownContentLeft(true);
@@ -2407,13 +2675,15 @@ function read(path, index = 1, end = false) {
 					hideContentRunningST = true;
 				}
 			}
-			else {
+			else
+			{
 				clearTimeout(hideContentST);
 
 				hideContentRunningST = false;
 			}
 
-			if (shownBarHeader && y > template.barHeader().height() + 48) {
+			if(shownBarHeader && y > template.barHeader().height() + 48)
+			{
 				clearTimeout(hideContentST);
 
 				$('.bar-header').removeClass('show');
@@ -2422,7 +2692,8 @@ function read(path, index = 1, end = false) {
 				hideContentRunningST = false;
 			}
 
-			if (shownContentLeft && x > template.contentLeft().width() + 48) {
+			if(shownContentLeft && x > template.contentLeft().width() + 48)
+			{
 				clearTimeout(hideContentST);
 
 				$('.content-left').removeClass('show');
@@ -2434,10 +2705,12 @@ function read(path, index = 1, end = false) {
 
 	});
 
-	$(window).on('mouseup touchend', function (e) {
+	$(window).on('mouseup touchend', function(e) {
 
-		if (haveZoom && zoomMoveData.active) {
-			if (typeof zoomMoveData.tranX !== 'undefined') {
+		if(haveZoom && zoomMoveData.active)
+		{
+			if(typeof zoomMoveData.tranX !== 'undefined')
+			{
 				scalePrevData.tranX = zoomMoveData.tranX;
 				scalePrevData.tranY = zoomMoveData.tranY;
 			}
@@ -2446,38 +2719,42 @@ function read(path, index = 1, end = false) {
 
 			$('body').removeClass('dragging');
 		}
-
-		if (readingDragScroll) {
-			if (readingDragScroll.start) {
+		
+		if(readingDragScroll)
+		{
+			if(readingDragScroll.start)
+			{
 				var first = readingDragScroll.speed[0];
-				var last = readingDragScroll.speed[readingDragScroll.speed.length - 1];
+				var last = readingDragScroll.speed[readingDragScroll.speed.length-1];
 
 				var dragSpeed = (first.pageY - last.pageY) / ((performance.now() - first.time) / 1000);
 
-				if (Math.abs(dragSpeed) > 120) {
+				if(Math.abs(dragSpeed) > 120)
+				{
 					var duration = Math.abs(dragSpeed) / 1000;
 
-					if (duration > 2)
+					if(duration > 2)
 						duration = 2;
-					else if (duration < 0.4)
+					else if(duration < 0.4)
 						duration = 0.4;
 
 					var moreScroll = Math.round((dragSpeed * duration) * 0.366);
 
-					readingDragScroll.content.stop(true).animate({ scrollTop: (readingDragScroll.content.scrollTop() + moreScroll) + 'px' }, duration * 1000, $.bez([0.22, 0.6, 0.3, 1]));
+					readingDragScroll.content.stop(true).animate({scrollTop: (readingDragScroll.content.scrollTop() + moreScroll)+'px'}, duration * 1000, $.bez([0.22, 0.6, 0.3, 1]));
 				}
 
 				$('body').removeClass('dragging');
 			}
 
-			setTimeout(function () { reading.setReadingDragScroll(false) }, 10);
+			setTimeout(function(){reading.setReadingDragScroll(false)}, 10);
 		}
 
 	});
 
-	$(window).on('click', function (e) {
+	$(window).on('click', function(e) {
 
-		if (onReading && config.readingMagnifyingGlass && readingTouchEvent) {
+		if(onReading && config.readingMagnifyingGlass && readingTouchEvent)
+		{
 			var x = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : (e.pageX ? e.pageX : e.clientX);
 			var y = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : (e.pageY ? e.pageY : e.clientY);
 
@@ -2486,15 +2763,19 @@ function read(path, index = 1, end = false) {
 			var rbOffsetTop = template.contentRight('.reading-body').offset().top;
 			var rbOffsetLeft = template.contentRight('.reading-body').offset().left;
 
-			if (x > rbOffsetLeft && y > rbOffsetTop && x < (rbWidth + rbOffsetLeft) && y < (rbHeight + rbOffsetTop)) {
-				if (!magnifyingGlassView) {
+			if(x > rbOffsetLeft && y > rbOffsetTop && x < (rbWidth + rbOffsetLeft) && y < (rbHeight + rbOffsetTop))
+			{
+				if(!magnifyingGlassView)
+				{
 					magnifyingGlassControl(1, e);
 				}
-				else {
+				else
+				{
 					magnifyingGlassControl(0, e);
 				}
 			}
-			else {
+			else
+			{
 				magnifyingGlassControl(0, e);
 			}
 		}
@@ -2503,16 +2784,17 @@ function read(path, index = 1, end = false) {
 
 	$(window).on('resize', resizedWindow);
 
-	$(window).on('mousewheel touchstart keydown', function (e) {
+	$(window).on('mousewheel touchstart keydown', function(e) {
 
-		if (e.type != 'keydown' || (e.type == 'keydown' && (e.keyCode == 38 || e.keyCode == 40)))
+		if(e.type != 'keydown' || (e.type == 'keydown' && (e.keyCode == 38 || e.keyCode == 40)))
 			disableOnScroll(2);
 
 	});
 
-	template.contentRight().children('div').on('scroll', function (e) {
+	template.contentRight().children('div').on('scroll', function(e) {
 
-		if (activeOnScroll && readingViewIs('scroll')) {
+		if(activeOnScroll && readingViewIs('scroll'))
+		{
 			previousScrollTop = $(this).scrollTop();
 			let contentHeight = template.contentRight().children('div').height();
 			let contentPosition = (previousScrollTop + (contentHeight / 2)),
@@ -2524,33 +2806,40 @@ function read(path, index = 1, end = false) {
 			let lastKey = imagesFullPosition.length - 1;
 
 			toBreak:
-			for (let key1 in imagesFullPosition) {
-				for (let key2 in imagesFullPosition[key1]) {
-					if (key1 == 0 && imagesFullPosition[key1][key2].center - contentPositionTop > 0) {
+			for(let key1 in imagesFullPosition)
+			{
+				for(let key2 in imagesFullPosition[key1])
+				{
+					if(key1 == 0 && imagesFullPosition[key1][key2].center - contentPositionTop > 0)
+					{
 						selIndex = key1;
 
 						break toBreak;
 					}
-					else if (key1 == lastKey && imagesFullPosition[key1][key2].center - contentPositionBottom < 0) {
+					else if(key1 == lastKey && imagesFullPosition[key1][key2].center - contentPositionBottom < 0)
+					{
 						selIndex = key1;
 
 						break toBreak;
 					}
-					else {
+					else
+					{
 						var position = 0;
 
-						if (Math.abs(contentPosition - imagesFullPosition[key1][key2].top) < Math.abs(contentPosition - imagesFullPosition[key1][key2].bottom))
+						if(Math.abs(contentPosition - imagesFullPosition[key1][key2].top) < Math.abs(contentPosition - imagesFullPosition[key1][key2].bottom))
 							position = imagesFullPosition[key1][key2].top + 16;
 						else
 							position = imagesFullPosition[key1][key2].bottom - 16;
 
 						position = Math.abs(contentPosition - position);
 
-						if (!selIndex || position < selPosition) {
+						if(!selIndex || position < selPosition)
+						{
 							selIndex = key1;
 							selPosition = position;
 						}
-						else if (selIndex && position > selPosition) {
+						else if(selIndex && position > selPosition)
+						{
 							break toBreak;
 						}
 					}
@@ -2563,7 +2852,7 @@ function read(path, index = 1, end = false) {
 
 			maxPageVisibility = pageVisibility;
 
-			if (pageVisibility > 0)
+			if(pageVisibility > 0)
 				var contentHeightRes = ((contentHeight * pageVisibility) - imgHeight) / pageVisibility;
 			else
 				var contentHeightRes = 0;
@@ -2572,29 +2861,31 @@ function read(path, index = 1, end = false) {
 
 			currentPageVisibility = Math.round((previousScrollTop - (imagesFullPosition[selIndex][0].top - _config.readingMargin.top)) / scrollPart);
 
-			if (currentIndex != (parseInt(selIndex) + 1)) {
-				if (currentScale != 1)
+			if(currentIndex != (parseInt(selIndex) + 1))
+			{
+				if(currentScale != 1)
 					reading.resetZoom();
 
 				var isBookmarkTrue = false;
 
-				eachImagesDistribution(selIndex, ['image'], function (image) {
+				eachImagesDistribution(selIndex, ['image'], function(image){
 
-					if (!isBookmarkTrue && images[image.index] && isBookmark(p.normalize(images[image.index].path)))
+					if(!isBookmarkTrue && images[image.index] && isBookmark(p.normalize(images[image.index].path)))
 						isBookmarkTrue = true;
 
 				});
 
 				var imageIndex = false;
 
-				eachImagesDistribution(selIndex, ['image', 'folder'], function (image) {
+				eachImagesDistribution(selIndex, ['image', 'folder'], function(image){
 
-					if (!imageIndex)
+					if(!imageIndex)
 						imageIndex = image.index
 
 				});
 
-				if (imageIndex) {
+				if(imageIndex)
+				{
 					saveReadingProgressA = true;
 
 					goToImageCL(imageIndex, true);
@@ -2609,19 +2900,20 @@ function read(path, index = 1, end = false) {
 	imagesNum = template.contentRight('.reading-body img').length;
 	contentNum = template.contentRight('.reading-body .r-img:not(.blank)').length;
 
-	template.contentRight('.reading-body img').each(function () {
+	template.contentRight('.reading-body img').each(function() {
 
 		var index = parseInt($(this).attr('index'));
 
 		images[index] = new Image();
 		images[index].index = index;
-		images[index].onload = function () {
+		images[index].onload = function() {
 
-			imagesData[this.index] = { width: this.width, height: this.height, aspectRatio: (this.width / this.height) };
+			imagesData[this.index] = {width: this.width, height: this.height, aspectRatio: (this.width / this.height)};
 
 			imagesNumLoad++;
 
-			if (imagesNumLoad == imagesNum) {
+			if(imagesNumLoad == imagesNum)
+			{
 				template.contentRight('.reading-body').css('display', 'block');
 				addHtmlImages();
 				disposeImages();
@@ -2631,23 +2923,24 @@ function read(path, index = 1, end = false) {
 
 				var newIndex = currentIndex;
 
-				if (_config.readingManga && !readingViewIs('scroll'))
+				if(_config.readingManga && !readingViewIs('scroll'))
 					newIndex = (indexNum - newIndex) + 1;
 
 				goToIndex(newIndex, false, end, end);
 
-				if (readingViewIs('scroll'))
+				if(readingViewIs('scroll'))
 					previousContentHeight = template.contentRight().children('div').children('div').height();
 			}
 
 		}
-		images[index].onerror = function () {
+		images[index].onerror = function() {
 
-			imagesData[this.index] = { width: 0, height: 0, aspectRatio: 0 };
+			imagesData[this.index] = {width: 0, height: 0, aspectRatio: 0};
 
 			imagesNumLoad++;
 
-			if (imagesNumLoad == imagesNum) {
+			if(imagesNumLoad == imagesNum)
+			{
 				template.contentRight('.reading-body').css('display', 'block');
 				addHtmlImages();
 				disposeImages();
@@ -2657,12 +2950,12 @@ function read(path, index = 1, end = false) {
 
 				var newIndex = currentIndex;
 
-				if (_config.readingManga && !readingViewIs('scroll'))
+				if(_config.readingManga && !readingViewIs('scroll'))
 					newIndex = (indexNum - newIndex) + 1;
 
 				goToIndex(newIndex, false, end, end);
 
-				if (readingViewIs('scroll'))
+				if(readingViewIs('scroll'))
 					previousContentHeight = template.contentRight().children('div').children('div').height();
 			}
 
@@ -2673,20 +2966,20 @@ function read(path, index = 1, end = false) {
 
 
 	});
-
+	
 	tracking.track();
 }
 
 module.exports = {
 	read: read,
-	images: function () { return images },
+	images: function(){return images},
 	imagesNum: imagesNum,
-	contentNum: function () { return contentNum },
+	contentNum: function(){return contentNum},
 	imagesNumLoad: imagesNumLoad,
-	imagesData: function () { return imagesData },
+	imagesData: function(){return imagesData},
 	goToImage: goToImage,
 	goToFolder: goToFolder,
-	goToIndex: function (v1, v2, v3, v4) { readingDirection = true; goToIndex(v1, v2, v3, v4) },
+	goToIndex: function(v1, v2, v3, v4){readingDirection = true; goToIndex(v1, v2, v3, v4)},
 	goStart: goStart,
 	goPrevious: goPrevious,
 	goNext: goNext,
@@ -2704,14 +2997,14 @@ module.exports = {
 	calculateView: calculateView,
 	stayInLine: stayInLine,
 	setCurrentComics: setCurrentComics,
-	currentComics: function () { return currentComics },
+	currentComics: function(){return currentComics},
 	disableOnScroll: disableOnScroll,
-	activeOnScroll: function () { return activeOnScroll },
+	activeOnScroll: function(){return activeOnScroll},
 	saveReadingProgress: saveReadingProgress,
-	saveReadingProgressA: function () { return saveReadingProgressA },
+	saveReadingProgressA: function(){return saveReadingProgressA},
 	createAndDeleteBookmark: createAndDeleteBookmark,
-	currentIndex: function () { return currentIndex },
-	currentPageVisibility: function () { return currentPageVisibility },
+	currentIndex: function(){return currentIndex},
+	currentPageVisibility: function(){return currentPageVisibility},
 	loadBookmarks: loadBookmarks,
 	loadTrackigSites: loadTrackigSites,
 	loadReadingPages: loadReadingPages,
@@ -2721,20 +3014,20 @@ module.exports = {
 	editReadingShortcutPagesConfigName: editReadingShortcutPagesConfigName,
 	newReadingShortcutPagesConfig: newReadingShortcutPagesConfig,
 	removeReadingShortcutPagesConfig: removeReadingShortcutPagesConfig,
-	currentReadingConfigKey: function () { return currentReadingConfigKey },
-	onReading: function () { return onReading },
+	currentReadingConfigKey: function(){return currentReadingConfigKey},
+	onReading: function(){return onReading},
 	calculateImagesDistribution: calculateImagesDistribution,
-	imagesDistribution: function () { return imagesDistribution },
+	imagesDistribution: function(){return imagesDistribution},
 	applyMangaReading: applyMangaReading,
-	haveZoom: function () { return haveZoom },
-	imagesPosition: function () { return imagesPosition },
-	imagesFullPosition: function () { return imagesFullPosition },
-	readingCurrentPath: function () { return readingCurrentPath },
+	haveZoom: function(){return haveZoom},
+	imagesPosition: function(){return imagesPosition},
+	imagesFullPosition: function(){return imagesFullPosition},
+	readingCurrentPath: function () {return readingCurrentPath},
 	setReadingDragScroll: setReadingDragScroll,
 	hideContent: hideContent,
 	hideContentLeft: hideContentLeft,
 	hideBarHeader: hideBarHeader,
-	setShownContentLeft: function (value) { shownContentLeft = value },
-	setShownBarHeader: function (value) { shownBarHeader = value },
+	setShownContentLeft: function(value){shownContentLeft = value},
+	setShownBarHeader: function(value){shownBarHeader = value},
 	loadReadingMoreOptions: loadReadingMoreOptions,
 };

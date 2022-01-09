@@ -316,6 +316,8 @@ function loadFilesIndexPage(animation, path, keepScroll, mainPath)
 
 var currentPath = false, currentPathScrollTop = [];
 
+var wideToggle = false;
+
 function loadIndexPage(animation = true, path = false, content = false, keepScroll = false, mainPath = false)
 {
 	onReading = false;
@@ -516,6 +518,38 @@ function loadIndexPage(animation = true, path = false, content = false, keepScro
 		justifyViewModule();
 	});
 
+	document.addEventListener("keydown", function (event) {
+		if (event.key === "F13") {
+			let onReading = reading.onReading();
+
+			if (!onReading) {
+				let path = dom.indexMainPathA();
+				if (path) {
+					fileShell.openPath(dom.indexMainPathA());
+					return;
+				}
+				else {
+					let path = dom.currentPath;
+					if (path) {
+						fileShell.openPath(dom.indexMainPathA());
+						return;
+					}
+				}
+				console.log('unable to get path')
+			}
+			else if (onReading){
+				wideToggle = !wideToggle;
+				if (wideToggle)
+				{
+					document.getElementsByClassName("content-right")[0].style.transform = "scaleX(1.1)";
+				}
+				else
+				{
+					document.getElementsByClassName("content-right")[0].style.transform = "scaleX(1)";
+				}
+			}
+		}
+	});
 }
 
 function compressedError(error)
@@ -1381,8 +1415,9 @@ function nightMode()
 
 // Show the comic contet menu
 function comicContextMenu(path)
-{	
+{
 	$('#index-context-menu .context-menu-remove').attr('onclick', 'dom.removeComic(\''+escapeQuotes(escapeBackSlash(path), 'simples')+'\');');
+	$('#index-context-menu .context-menu-shell').attr('onclick', 'fileShell.openPath(\''+escapeQuotes(escapeBackSlash(path), 'simples')+'\');');
 	events.activeContextMenu('#index-context-menu');
 }
 
@@ -1600,4 +1635,5 @@ module.exports = {
 	compressedError: compressedError,
 	addImageToDom: addImageToDom,
 	indexMainPathA: function(){return indexMainPathA},
+	currentPath: currentPath
 };

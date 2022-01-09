@@ -1719,7 +1719,7 @@ body .preload
 .content-view-module > div
 {
 	width: 300px;
-	height: 400px;
+	height: 440px;
 	margin: 16px 0px 16px 16px;
 	float: left;
 }
@@ -1727,7 +1727,7 @@ body .preload
 .content-view-module .v-folder
 {
 	width: 300px;
-	height: 400px;
+	height: 440px;
 	border-radius: 4px;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	background-color: #fff;
@@ -1742,7 +1742,7 @@ body .preload
 .content-view-module .v-img
 {
 	width: 300px;
-	height: 400px;
+	height: 440px;
 	cursor: pointer;
 	line-height: 300px;
 	text-align: center;
@@ -1785,7 +1785,7 @@ body .preload
 .content-view-module .folder-images
 {
 	width: 140px;
-	height: 215px;
+	height: 210px;
 	margin: 10px 0px 0px 10px;
 	background-size: 100%;
 	background-position: 50%;

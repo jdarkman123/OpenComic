@@ -212,6 +212,7 @@ const storage = require(p.join(appDir, 'scripts/storage.js')),
 	file = require(p.join(appDir, 'scripts/file.js')),
 	fileCompressed = require(p.join(appDir, 'scripts/file-compressed.js')),
 	reading = require(p.join(appDir, 'scripts/reading.js')),
+	fileShell = require(p.join(appDir, 'scripts/file-shell.js')),
 	tracking = require(p.join(appDir, 'scripts/tracking.js')),
 	trackingSites = require(p.join(appDir, 'scripts/tracking/tracking-sites.js'));
 

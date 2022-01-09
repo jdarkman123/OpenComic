@@ -246,7 +246,7 @@ function calcAspectRatio(first, second)
 function disposeImages(data = false)
 {
 	var margin = (data && typeof data.margin !== 'undefined') ? data.margin : _config.readingMargin.margin;
-	var marginHorizontal = (data && typeof data.left !== 'undefined') ? data.left : _config.readingMargin.left;
+	var marginHorizontal = ((data && typeof data.left !== 'undefined') ? data.left : _config.readingMargin.left) * 2;
 	var marginVertical = (data && typeof data.top !== 'undefined') ? data.top : _config.readingMargin.top;
 	var marginHorizontalsHorizontal = (data && typeof data.horizontalsLeft !== 'undefined') ? data.horizontalsLeft : _config.readingHorizontalsMargin.left;
 	//var marginHorizontalsVertical = (data && typeof data.horizontalsTop !== 'undefined') ? data.horizontalsTop : _config.readingHorizontalsMargin.top;
@@ -2434,7 +2434,6 @@ function read(path, index = 1, end = false)
 				goEnd();
 			}
 		}
-		
 	})
 
 	$(window).on('touchstart', function(e) {

@@ -9,6 +9,9 @@ window.onerror = function(msg, url, linenumber) {
 
 }*/
 
+var wideToggle = 0;
+var widths = [0, .05, .1, .15, .2, .25];
+
 document.addEventListener("keydown", event => {
 
 	if(event.key == 'Escape')
@@ -56,6 +59,29 @@ document.addEventListener("mouseup", function (event) {
 		$(".bar-back, .show").trigger('click');
 	}
 });
+
+document.addEventListener("keyup", function (event) {
+	if (event.key === "F13") {
+		let onReading = reading.onReading();
+
+		if (!onReading) {
+			let paths = [dom.currentPath, dom.indexMainPathA()];
+			for (path in paths) {
+				if (path) {
+					fileShell.openPath(dom.indexMainPathA());
+					return;
+				}
+			}
+			console.log('unable to get path');
+		}
+		else if (onReading){
+			wideToggle = (wideToggle + 1) % widths.length;
+			var newTransform = 1 + widths[wideToggle];
+			document.getElementsByClassName("content-right")[0].style.transform = "scaleX(" + newTransform + ")";
+		}
+	}
+});
+
 
 
 const electron = require('electron'),
